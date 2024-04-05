@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""insertDoc.py  :  Insert document in the desired MongoDB and collection """
+"""insert.py  :  Insert document in the desired MongoDB and collection """
 
 __author__ = "Marta Huertas"
 __version__ = "0.1"
@@ -23,6 +23,8 @@ def insertOne(db, collection_name, json_documents):
 
     # Access the collection:
     collection = db[collection_name]
+    
+    print(f"Documents inserted into {collection_name} collection")
 
     # Insert the document into the collection
     result = collection.insert_one(documents)
@@ -42,8 +44,10 @@ def insertMany(db, collection_name, json_documents):
     # Access the collection:
     collection = db[collection_name]
 
+    print(f"Documents inserted into {collection_name} collection")
+
     # Insert the document into the collection
-    result = collection.insert_many(json_documents)
+    result = collection.insert_many(documents)
 
     # Print the inserted document ID
-    print("Inserted document IDs:", result.inserted_ids)
+    print(f"Insertion done. Number of inserted documents: {len(result.inserted_ids)}")

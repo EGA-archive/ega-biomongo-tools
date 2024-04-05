@@ -12,8 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import insert, mongoConnection
-
+from source import insert, update, mongoConnection
 
 # Functions
 def print_help():
@@ -46,8 +45,11 @@ def run_operation():
     if conf.operation == 'insert_one':
         insert.insertOne(db, conf.collection_name, conf.json_documents)
 
-    if conf.operation == 'insert_many':
+    elif conf.operation == 'insert_many':
         insert.insertMany(db, conf.collection_name, conf.json_documents)
+    
+    elif conf.operation == 'update_one':
+        update.updateOne(db, conf.collection_name, conf.ega_id, conf.update_field, conf.new_value)
 
 
 def main():
@@ -62,7 +64,7 @@ def main():
         run_operation()
 
 if __name__ == main():
-    main()
+    main
 
 
         
