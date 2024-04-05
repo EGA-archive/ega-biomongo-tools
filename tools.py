@@ -12,7 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import mongoConnection, insertOne
+from source import insert, mongoConnection
 
 
 # Functions
@@ -38,4 +38,7 @@ def run_operation():
     db = connect_mongo()
 
     if conf.operation == 'insert_one':
-        insertOne.insert_one(db, conf.collection_name, conf.json_documents)
+        insert.insertOne(db, conf.collection_name, conf.json_documents)
+
+    if conf.operation == 'insert_many':
+        insert.insertMany(db, conf.collection_name, conf.json_documents)
