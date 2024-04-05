@@ -23,12 +23,18 @@ def print_help():
     print('Follow the guidelines in that file.')
 
 def connect_mongo():
-    # Connect to MongoDB
-    client = MongoClient(mongoConnection.mongo_host, mongoConnection.mongo_port, username=mongoConnection.username, password=mongoConnection.password, authSource=mongoConnection.auth_source)
-    # Acces the database:
-    db = client[conf.database_name]
+    try:
+        # Connect to MongoDB
+        client = MongoClient(mongoConnection.mongo_host, mongoConnection.mongo_port, username=mongoConnection.username, password=mongoConnection.password, authSource=mongoConnection.auth_source)
+        # Acces the database:
+        db = client[conf.database_name]
+        # If connection successful, print success message
+        print("Connection to BioMongoDB established.")
 
-    return db
+        return db
+    except ConnectionError as e:
+        # If connection fails, print error message
+        print("Failed to connect to MongoDB:", e)
 
 def run_operation():
     """
@@ -42,3 +48,21 @@ def run_operation():
 
     if conf.operation == 'insert_many':
         insert.insertMany(db, conf.collection_name, conf.json_documents)
+
+
+def main():
+    if conf.operation == '':
+        # First print help message just in case.
+        print_help()
+    else:
+        print(f'Operation: {conf.operation}')
+        print(f'Database: {conf.database_name}')
+
+        # Run the operation determined in conf:
+        run_operation()
+
+if __name__ == main():
+    main()
+
+
+        
