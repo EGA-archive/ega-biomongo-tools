@@ -20,10 +20,10 @@ method="EGAPRO"
 
 # General information
 database_name='mhuertas' # Name of the database (this is in test)
-collection_name='sample' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
+collection_name='run' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
 
 # Insert needs:
-json_documents='./test_metadata/sample/sample_0.json' # Path to the json documents to be included in the MongoDB
+json_documents='./test_metadata/run/run_0.json' # Path to the json documents to be included in the MongoDB
 
 # Update needs:
 update_field='' # Target field to be updated

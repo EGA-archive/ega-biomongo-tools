@@ -15,7 +15,8 @@ import json
 # Insert one function
 def insertOne(db, collection_name, json_documents):
     """
-    Insert one document in a specific database
+    Insert one document in a specific collection from a database.
+    The collection will be created if it doesn't exist.
     """
     # Read the JSON file
     with open(json_documents) as f:
@@ -35,7 +36,8 @@ def insertOne(db, collection_name, json_documents):
 # Insert one function
 def insertMany(db, collection_name, json_documents):
     """
-    Insert one document in a specific database
+    Insert one document in a specific collection from a database.
+    The collection will be created if it doesn't exist.
     """
     # Read the JSON file
     with open(json_documents) as f:
