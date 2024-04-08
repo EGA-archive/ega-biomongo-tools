@@ -12,7 +12,7 @@ __status__ = "development"
 
 # First you should state the operation you need to perform.
 # Depending on the operation you should include the relevant information.
-operation='insert_many' # Operations: insert_one, insert_many, update_one, update_many
+operation='insert_many' # Operations: insert_one, insert_many, update_one, update_many, update_all
 
 # Metadata information
 name="Marta Huertas"
@@ -31,3 +31,6 @@ new_value=''
 
 # Update_one needs:
 ega_id='' # Id of the object to be modified
+
+# Update many needs:
+update_criteria={"field_to_match": "value_to_match"}

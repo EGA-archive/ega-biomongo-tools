@@ -31,7 +31,7 @@ def updateOne(db, collection_name, ega_id, update_field, new_value):
 
 def updateAll(db, collection_name, update_field, new_value):
     """
-    Update all document in a specific collection from database
+    Update all documents in a specific collection from database
     """
     # Access the collection:
     collection = db[collection_name]
@@ -42,3 +42,16 @@ def updateAll(db, collection_name, update_field, new_value):
     print(f'Field {update_field} updated successfully in all the documents with {new_value}')
         
         
+# Update documents function
+def updateMany(db, collection_name, update_criteria, update_field, new_value):
+    """
+    Update multiple documents in a specific collection based on given criteria
+    """
+    # Access the collection
+    collection = db[collection_name]
+    
+    # Update multiple documents in the collection
+    result = collection.update_many(update_criteria, {"$set": {update_field: new_value}})
+    
+    # Print the number of documents updated
+    print(f'Field {update_field} updated successfully with {new_value} in {result.modified_count} documents')
