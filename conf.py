@@ -12,7 +12,7 @@ __status__ = "development"
 
 # First you should state the operation you need to perform.
 # Depending on the operation you should include the relevant information.
-operation='update_one' # Operations: insert_one, insert_many, update_one, update_many
+operation='insert_many' # Operations: insert_one, insert_many, update_one, update_many
 
 # Metadata information
 name="Marta Huertas"
@@ -20,14 +20,14 @@ method="EGAPRO"
 
 # General information
 database_name='mhuertas' # Name of the database (this is in test)
-collection_name='study' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
+collection_name='sample' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
 
 # Insert needs:
-json_documents='./test_metadata/study/study_0.json' # Path to the json documents to be included in the MongoDB
+json_documents='./test_metadata/sample/sample_0.json' # Path to the json documents to be included in the MongoDB
 
 # Update needs:
-update_field='title' # Target field to be updated
-new_value='test'
+update_field='' # Target field to be updated
+new_value=''
 
 # Update_one needs:
-ega_id='EGAS00000000001' # Id of the object to be modified
+ega_id='' # Id of the object to be modified

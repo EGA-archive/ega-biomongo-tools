@@ -50,4 +50,4 @@ def insertMany(db, collection_name, json_documents):
     result = collection.insert_many(documents)
 
     # Print the inserted document ID
-    print(f"Insertion done. Number of inserted documents: {len(result.inserted_ids)}")
+    print(f"Number of inserted documents: {len(result.inserted_ids)}")
