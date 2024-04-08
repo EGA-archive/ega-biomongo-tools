@@ -39,7 +39,7 @@ def updateAll(db, collection_name, update_field, new_value):
     # Update all documents in the collection
     result = collection.update_many({}, {"$set": {update_field: new_value}})
         
-    print(f'Field {update_field} updated successfully in all the documents with {new_value}')
+    print(f'Field {update_field} updated successfully in all the documents. New value: {new_value}')
         
         
 # Update documents function
@@ -54,4 +54,4 @@ def updateMany(db, collection_name, update_criteria, update_field, new_value):
     result = collection.update_many(update_criteria, {"$set": {update_field: new_value}})
     
     # Print the number of documents updated
-    print(f'Field {update_field} updated successfully with {new_value} in {result.modified_count} documents')
+    print(f'Field {update_field} updated successfully in {result.modified_count} documents. New value: {new_value}')
