@@ -11,7 +11,7 @@ __status__ = "development"
 # Insert one function
 def updateOne(db, collection_name, ega_id, update_field, new_value):
     """
-    Insert one document in a specific database
+    Update one document in a specific collection from database
     """
     # Access the collection:
     collection = db[collection_name]
@@ -23,11 +23,22 @@ def updateOne(db, collection_name, ega_id, update_field, new_value):
         
         # Print whether the document was updated or not
         if result.modified_count > 0:
-            print(f'Field {update_field} updated successfully in the study with id {ega_id}')
+            print(f'Field {update_field} updated successfully in the document with id {ega_id}')
         else:
             print(f"The field {update_field} already has the specific value")
     else:
         print(f"There's no document with id {ega_id} in the collection.")
 
+def updateAll(db, collection_name, update_field, new_value):
+    """
+    Update all document in a specific collection from database
+    """
+    # Access the collection:
+    collection = db[collection_name]
 
+    # Update all documents in the collection
+    result = collection.update_many({}, {"$set": {update_field: new_value}})
+        
+    print(f'Field {update_field} updated successfully in all the documents with {new_value}')
+        
         
