@@ -27,5 +27,5 @@ json_documents='./test_metadata/study/study_0.json' # Path to the json documents
 
 # Update needs:
 update_field='' # Target field to be updated
-new_value=''
-update_criteria={'field_to_match': 'value_to_match'} # Criteria to update one or many
+new_value='' # New value for the field
+update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values.

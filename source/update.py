@@ -15,19 +15,20 @@ def updateOne(db, collection_name, update_criteria, update_field, new_value):
     """
     # Access the collection:
     collection = db[collection_name]
-
-        # Check if the document with the specified ID exists in the collection
+    
+    # Check if the document with the specified criteria exists in the collection
     if collection.find_one(update_criteria):
         # Update the document
         result = collection.update_one(update_criteria, {"$set": {update_field: new_value}})
         
         # Print whether the document was updated or not
         if result.modified_count > 0:
-            print(f'Field {update_field} updated successfully in the document with id {update_criteria.value}')
+            print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
         else:
             print(f"The field {update_field} already has the specific value")
     else:
-        print(f"There's no document with id {update_criteria.value} in the collection.")
+        print(f"The document you are searching for is not in the collection.")
+
 
 def updateAll(db, collection_name, update_field, new_value):
     """

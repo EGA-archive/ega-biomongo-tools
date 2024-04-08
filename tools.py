@@ -49,7 +49,7 @@ def run_operation():
         insert.insertMany(db, conf.collection_name, conf.json_documents)
     
     elif conf.operation == 'update_one':
-        update.updateOne(db, conf.collection_name, conf.ega_id, conf.update_field, conf.new_value)
+        update.updateOne(db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value)
 
     elif conf.operation == 'update_many':
         update.updateMany(db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value)
