@@ -18,7 +18,7 @@ from source import insert, update, mongoConnection
 def print_help():
     print('USAGE:')
     print('This script combines different tools to manage the BioMongoDB in EGA')
-    print('First thing to do is to write your needs in the conf.txt file')
+    print('First thing to do is to write your needs in the conf.py file')
     print('Follow the guidelines in that file.')
 
 def connect_mongo():
