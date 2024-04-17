@@ -12,20 +12,20 @@ __status__ = "development"
 
 # First you should state the operation you need to perform.
 # Depending on the operation you should include the relevant information.
-operation='insert_one' # Operations: insert_one, insert_many, update_one, update_many, update_all
+operation='update_all' # Operations: insert_one, insert_many, update_one, update_many, update_all
 
 # Metadata information
 name="Marta Huertas"
-method="Manual insert test"
+method="Testing"
 
 # General information
 database_name='mhuertas' # Name of the database (this is in test)
 collection_name='study' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
 
 # Insert needs:
-json_documents='./test_metadata/study/study_test.json' # Path to the json documents to be included in the MongoDB
+json_documents='./test_metadata/study/study_0.json' # Path to the json documents to be included in the MongoDB
 
 # Update needs:
-update_field='' # Target field to be updated
-new_value='' # New value for the field
-update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values.
+update_field='title' # Target field to be updated
+new_value='cambiando todo' # New value for the field
+update_criteria={'':''} # Criteria to update one or many. If you want to update one, pick a field with unique values.

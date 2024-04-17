@@ -49,13 +49,13 @@ def run_operation():
         insert.insertMany(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
     
     elif conf.operation == 'update_one':
-        update.updateOne(db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value)
+        update.updateOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
 
     elif conf.operation == 'update_many':
-        update.updateMany(db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value)
+        update.updateMany(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
     
     elif conf.operation == 'update_all':
-        update.updateAll(db, conf.collection_name, conf.update_field, conf.new_value)
+        update.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
 
 
 def main():
