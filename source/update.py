@@ -35,9 +35,9 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             existing_meta_info = previous_document.get("meta_info", {})
 
             # Define the new metadata to be added
-            new_meta_info_key = f"{operation}_{len(existing_meta_info)}"  # Create a unique key
+            new_meta_info_key = str(process_id)  # Create a unique key
             new_meta_info = {
-                "process_id": process_id,
+                "operation": operation,
                 "modified_field": update_field,
                 "previous_value": previous_value
             }
@@ -85,9 +85,9 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 existing_meta_info = previous_document.get("meta_info", {})
 
                 # Define the new metadata to be added
-                new_meta_info_key = f"{operation}_{len(existing_meta_info)}"  # Create a unique key
+                new_meta_info_key = str(process_id)  # Create a unique key
                 new_meta_info = {
-                    "process_id": process_id,
+                    "operation": operation,
                     "modified_field": update_field,
                     "previous_value": previous_value
                 }
@@ -127,9 +127,9 @@ def updateMany(operation, db, collection_name, update_criteria, update_field, ne
             existing_meta_info = previous_document.get("meta_info", {})
 
             # Define the new metadata to be added
-            new_meta_info_key = f"{operation}_{len(existing_meta_info)}"  # Create a unique key
+            new_meta_info_key = str(process_id)  # Create a unique key
             new_meta_info = {
-                "process_id": process_id,
+                "operation": operation,
                 "modified_field": update_field,
                 "previous_value": previous_value
             }
