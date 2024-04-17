@@ -32,7 +32,7 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
     result = collection.insert_one(documents)
 
     doc_id = result.inserted_id
-    
+
     # Print the inserted document ID
     print("Inserted document ID:", result.inserted_id)
 
@@ -43,8 +43,8 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
 
     # Update inserted document with a reference to the meta document and operation
     meta_info = {
-        operation : {
-        "process_id": process_id,}
+        process_id : {
+        "operation": operation,}
     }
     # Merge the meta_info with the existing document
     collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
@@ -78,8 +78,8 @@ def insertMany(operation, db, collection_name, json_documents, name, method):
     # Update each inserted document with a reference to the meta document and operation
     for doc_id in result.inserted_ids:
         meta_info = {
-            operation : {
-            "process_id": process_id,}
+            str(process_id) : {
+            "operation": operation,}
         }
         # Merge the meta_info with the existing document
         collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
