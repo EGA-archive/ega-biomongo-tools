@@ -43,7 +43,7 @@ def run_operation():
     db = connect_mongo()
 
     if conf.operation == 'insert_one':
-        insert.insertOne(db, conf.collection_name, conf.json_documents)
+        insert.insertOne(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
 
     elif conf.operation == 'insert_many':
         insert.insertMany(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
