@@ -43,7 +43,7 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
 
     # Update inserted document with a reference to the meta document and operation
     meta_info = {
-        process_id : {
+        str(process_id) : {
         "operation": operation,}
     }
     # Merge the meta_info with the existing document
