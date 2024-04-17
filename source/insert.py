@@ -11,9 +11,10 @@ __status__ = "development"
 
 # Import Packages
 import json
+from . import meta
 
 # Insert one function
-def insertOne(db, collection_name, json_documents):
+def insertOne(operation, db, collection_name, json_documents, name, method):
     """
     Insert one document in a specific collection from a database.
     The collection will be created if it doesn't exist.
@@ -30,11 +31,26 @@ def insertOne(db, collection_name, json_documents):
     # Insert the document into the collection
     result = collection.insert_one(documents)
 
+    doc_id = result.inserted_id
+    
     # Print the inserted document ID
     print("Inserted document ID:", result.inserted_id)
 
+    print("Generating meta information about the process.")
+
+    # Get the ObjectId of the inserted process document
+    process_id = meta.insertMeta(db, name, method, operation, collection_name)
+
+    # Update inserted document with a reference to the meta document and operation
+    meta_info = {
+        operation : {
+        "process_id": process_id,}
+    }
+    # Merge the meta_info with the existing document
+    collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
+
 # Insert one function
-def insertMany(db, collection_name, json_documents):
+def insertMany(operation, db, collection_name, json_documents, name, method):
     """
     Insert one document in a specific collection from a database.
     The collection will be created if it doesn't exist.
@@ -53,3 +69,17 @@ def insertMany(db, collection_name, json_documents):
 
     # Print the inserted document ID
     print(f"Number of inserted documents: {len(result.inserted_ids)}")
+
+    print("Generating meta information about the process.")
+
+    # Get the ObjectId of the inserted process document
+    process_id = meta.insertMeta(db, name, method, operation, collection_name)
+
+    # Update each inserted document with a reference to the meta document and operation
+    for doc_id in result.inserted_ids:
+        meta_info = {
+            operation : {
+            "process_id": process_id,}
+        }
+        # Merge the meta_info with the existing document
+        collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
