@@ -43,7 +43,7 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             }
 
             # Merge the new metadata with the existing meta_info
-            updated_meta_info = {**existing_meta_info, new_meta_info_key: new_meta_info}
+            updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
 
             # Update the document with the new metadata
             result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
@@ -93,7 +93,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 }
 
                 # Merge the new metadata with the existing meta_info
-                updated_meta_info = {**existing_meta_info, new_meta_info_key: new_meta_info}
+                updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
 
                 # Update the document with the new metadata
                 collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
@@ -135,7 +135,7 @@ def updateMany(operation, db, collection_name, update_criteria, update_field, ne
             }
 
             # Merge the new metadata with the existing meta_info
-            updated_meta_info = {**existing_meta_info, new_meta_info_key: new_meta_info}
+            updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
 
             # Update the document with the new metadata
             collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
