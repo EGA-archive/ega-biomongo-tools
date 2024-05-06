@@ -9,6 +9,18 @@ __email__ = "marta.huertas@crg.eu"
 __status__ = "development"
 
 from . import meta
+import csv
+
+# Helper functions
+# Read data from CSV file
+def read_csv(update_file):
+    with open(update_file, 'r') as file:
+        reader = csv.reader(file)
+        # Skip header if present
+        next(reader)
+        # Convert CSV data into a list of lists or list of dictionaries
+        data = [row for row in reader]
+    return data
 
 # Insert one function
 def updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
@@ -40,6 +52,7 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             # Print whether the document was updated or not
             if result.modified_count > 0:
                 print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
+                print('')
             else:
                 print(f"The field {update_field} already has the specific value")
         else:
@@ -110,3 +123,26 @@ def updateMany(operation, db, collection_name, update_criteria, update_field, ne
         print(f'Field {update_field} updated successfully in {len(previous_documents)} documents matching the criteria. New value: {new_value}')
     else:
         print(f"The field {update_field} doesn't exist in one or more documents matching the criteria.")
+
+def updateFile(operation, db, collection_name, update_file, name, method):
+    """
+    Update multiple documents with information from a csv
+    """
+    # Import the update information
+    update_data = read_csv(update_file)
+
+    print(f'There are {len(update_data)} objects to update:')
+
+    # For each row, use the update one functio to modify the specific field stated in the file.
+    for row in update_data:
+        # Stable id of the object to be updated
+        update_criteria = {'stable_id' : str(row[0])}
+        # Field to update
+        update_field = str(row[1])
+        # New value
+        new_value = str(row[2])
+        
+        # Update the object with the corresponding stable_id
+        updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method)
+
+    print("Update done!")

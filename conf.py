@@ -19,7 +19,7 @@ name='' # Name of the person that does this operation
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO)
 
 # General information
-database_name='mhuertas' # Name of the database (this is in test)
+database_name='' # Name of the database (this is in test)
 collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
 
 # Insert needs:
@@ -30,4 +30,4 @@ update_field='' # Target field to be updated
 new_value='' # New value for the field
 update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values.
 # If using update_with_file, please provide the csv with the information
-update_file = './test_metadata/test.csv'
+update_file = 'path/to/update_file'

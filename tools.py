@@ -57,6 +57,9 @@ def run_operation():
     elif conf.operation == 'update_all':
         update.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
 
+    elif conf.operation == 'update_with_file':
+        update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
+
 
 def main():
     if conf.operation == '':
