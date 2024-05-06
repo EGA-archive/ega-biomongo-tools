@@ -85,7 +85,7 @@ def main():
         run_operation()
 
 if __name__ == main():
-    main
+    main()
 
 
         
