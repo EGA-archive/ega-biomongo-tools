@@ -42,29 +42,41 @@ def run_operation():
     # Get database connection:
     db = connect_mongo()
 
-    if conf.operation == 'insert_one':
+    if conf.operation == 'insert_one' and conf.json_documents != '':
         insert.insertOne(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
 
-    elif conf.operation == 'insert_many':
+    elif conf.operation == 'insert_many' and conf.json_documents != '':
         insert.insertMany(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
     
-    elif conf.operation == 'update_one':
+    elif conf.operation == 'update_one' and conf.update_field != '' and conf.new_value != '':
         update.updateOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
 
-    elif conf.operation == 'update_many':
+    elif conf.operation == 'update_many' and conf.update_field != '' and conf.new_value != '':
         update.updateMany(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
     
-    elif conf.operation == 'update_all':
+    elif conf.operation == 'update_all' and conf.update_field != '' and conf.new_value != '':
         update.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
 
-    elif conf.operation == 'update_with_file':
+    elif conf.operation == 'update_with_file' and conf.update_file != '':
         update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
 
+    else:
+        print('Something is missing in the conf.py file')
 
 def main():
-    if conf.operation == '':
+    if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
+    elif conf.operation == '':
+        print("Operation is missing")
+    elif conf.database_name == '':
+        print("Database is missing")
+    elif conf.collection_name == '':
+        print("Collection name is missing")
+    elif conf.name == '':
+        print("Your name is missing")
+    elif conf.name == '':
+        print("The method you used to obtain the information is missing")
     else:
         print(f'Operation: {conf.operation}')
         print(f'Database: {conf.database_name}')
