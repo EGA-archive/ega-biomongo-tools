@@ -12,7 +12,7 @@ __status__ = "development"
 
 # First you should state the operation you need to perform.
 # Depending on the operation you should include the relevant information.
-operation='' # Operations: insert_one, insert_many, update_one, update_many, update_all
+operation='' # Operations: insert_one, insert_many, update_one, update_many, update_all, update_with_file
 
 # Metadata information
 name='' # Name of the person that does this operation
