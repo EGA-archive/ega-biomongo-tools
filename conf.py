@@ -29,3 +29,5 @@ json_documents='path/to/json' # Path to the json documents to be included in the
 update_field='' # Target field to be updated
 new_value='' # New value for the field
 update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values.
+# If using update_with_file, please provide the csv with the information
+update_file = './test_metadata/test.csv'
