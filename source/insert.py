@@ -120,7 +120,7 @@ def insertMany(operation, db, collection_name, json_documents, name, method):
     # Filter out documents that are not already in the collection
     new_documents = [doc for doc in documents if doc['stable_id'] not in existing_identifiers]
 
-    print(f"{len(existing_identifiers)} of your documents already exist in the {collection_name} collection")
+    print(f"{len(existing_identifiers)} of your documents already exist in the {collection_name} collection.")
     # Insert only new documents into the collection
     if new_documents:
         result = collection.insert_many(new_documents)
