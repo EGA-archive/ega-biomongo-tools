@@ -26,8 +26,8 @@ collection_name='' # Collection to be managed (analysis, dac, dataset, experimen
 json_documents='path/to/json' # Path to the json documents to be included in the MongoDB
 
 # Update needs:
-update_field='' # Target field to be updated
-new_value='' # New value for the field
-update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values.
+update_field='' # Target field to be updated (no need if using a file)
+new_value='' # New value for the field (no need if using a file)
+update_criteria={'field_to_match':'value_to_match'} # Criteria to update one or many. If you want to update one, pick a field with unique values. (no need if using a file)
 # If using update_with_file, please provide the csv with the information
 update_file = 'path/to/update_file'
