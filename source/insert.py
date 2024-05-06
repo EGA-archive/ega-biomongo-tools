@@ -28,28 +28,34 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
     
     print(f"Documents inserted into {collection_name} collection")
 
-    # Insert the document into the collection
-    result = collection.insert_one(documents)
+    # Check if a document with the same ID already exists
+    existing_document = collection.find_one({'stable_id': documents["stable_id"]})
 
-    doc_id = result.inserted_id
+    if existing_document:
+        print(f"A document with the same stable_id already exists in the {collection_name} collection.")
+    else:
+        # Insert the document into the collection
+        result = collection.insert_one(documents)
 
-    # Print the inserted document ID
-    print("Inserted document ID:", result.inserted_id)
+        doc_id = result.inserted_id
 
-    print("Generating meta information about the process.")
+        # Print the inserted document ID
+        print("Inserted document ID:", result.inserted_id)
 
-    # Get the ObjectId of the inserted process document
-    process_id = meta.insertMeta(db, name, method, operation, collection_name)
+        print("Generating meta information about the process.")
 
-    # Update inserted document with a reference to the meta document and operation
-    meta_info = [
-        {
-        "meta_id" : str(process_id),
-        "operation": operation
-        }
-    ]
-    # Merge the meta_info with the existing document
-    collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
+        # Get the ObjectId of the inserted process document
+        process_id = meta.insertMeta(db, name, method, operation, collection_name)
+
+        # Update inserted document with a reference to the meta document and operation
+        meta_info = [
+            {
+            "meta_id" : str(process_id),
+            "operation": operation
+            }
+        ]
+        # Merge the meta_info with the existing document
+        collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
 
 # Insert one function
 def insertMany(operation, db, collection_name, json_documents, name, method):
