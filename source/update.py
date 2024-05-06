@@ -28,24 +28,13 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             # Get the previous value of the field
             previous_value = previous_document.get(update_field)
 
-            # Insert metadata about the update process
+            # Insert metadata about the update process in the meta collection
             process_id = meta.insertMeta(db, name, method, operation, collection_name)
 
-            # Get the existing meta_info, or an empty dictionary if it doesn't exist
-            existing_meta_info = previous_document.get("meta_info", {})
+            # Update the meta_info field in the JSON document
+            updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
 
-            # Define the new metadata to be added
-            new_meta_info_key = str(process_id)  # Create a unique key
-            new_meta_info = {
-                "operation": operation,
-                "modified_field": update_field,
-                "previous_value": previous_value
-            }
-
-            # Merge the new metadata with the existing meta_info
-            updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
-
-            # Update the document with the new metadata
+            # Update the document with the new data
             result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
             
             # Print whether the document was updated or not
@@ -81,19 +70,8 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 # Get the previous value of the field
                 previous_value = previous_document.get(update_field)
 
-                # Get the existing meta_info, or an empty dictionary if it doesn't exist
-                existing_meta_info = previous_document.get("meta_info", {})
-
-                # Define the new metadata to be added
-                new_meta_info_key = str(process_id)  # Create a unique key
-                new_meta_info = {
-                    "operation": operation,
-                    "modified_field": update_field,
-                    "previous_value": previous_value
-                }
-
-                # Merge the new metadata with the existing meta_info
-                updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
+                # Update the meta_info field in the JSON document
+                updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
 
                 # Update the document with the new metadata
                 collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
@@ -123,19 +101,8 @@ def updateMany(operation, db, collection_name, update_criteria, update_field, ne
             # Get the previous value of the field
             previous_value = previous_document.get(update_field)
 
-            # Get the existing meta_info, or an empty dictionary if it doesn't exist
-            existing_meta_info = previous_document.get("meta_info", {})
-
-            # Define the new metadata to be added
-            new_meta_info_key = str(process_id)  # Create a unique key
-            new_meta_info = {
-                "operation": operation,
-                "modified_field": update_field,
-                "previous_value": previous_value
-            }
-
-            # Merge the new metadata with the existing meta_info
-            updated_meta_info = {new_meta_info_key: new_meta_info, **existing_meta_info}
+            # Update the meta_info field in the JSON document
+            updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
 
             # Update the document with the new metadata
             collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})

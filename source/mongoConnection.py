@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""mongo_connection.py  :  Credentials for MongoDB connection """
+"""mongoConnection.py  :  Credentials for MongoDB connection """
 
 __author__ = "Marta Huertas"
 __version__ = "0.1"

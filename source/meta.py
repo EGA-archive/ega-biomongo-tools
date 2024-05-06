@@ -29,3 +29,24 @@ def insertMeta(db, name, method, operation, collection_name):
     meta_result = meta_collection.insert_one(process_info)
 
     return meta_result.inserted_id
+
+def updateMeta(previous_document, process_id, operation, update_field, previous_value):
+    """
+    Update already generated meta_info field
+    """
+    # Get the existing meta_info, or an empty list if it doesn't exist
+    existing_meta_info = previous_document.get("meta_info", [])
+
+    # Define the new metadata to be added
+    new_meta_info = {
+        "meta_id" : str(process_id),
+        "operation": operation,
+        "modified_field": update_field,
+        "previous_value": previous_value
+    }
+
+    # Merge the new metadata with the existing meta_info
+    existing_meta_info.insert(0, new_meta_info)
+
+    return existing_meta_info
+
