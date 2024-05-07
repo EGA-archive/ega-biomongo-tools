@@ -53,8 +53,6 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             if result.modified_count > 0:
                 print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
                 print('')
-            else:
-                print(f"The field {update_field} already has the specific value")
         else:
             print(f"The field {update_field} doesn't exist in the document.")
     else:
