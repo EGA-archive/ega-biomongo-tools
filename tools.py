@@ -12,7 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import insert, update, mongoConnection
+from source import insert, restore, update, mongoConnection
 
 # Functions
 def print_help():
@@ -50,15 +50,15 @@ def run_operation():
     
     elif conf.operation == 'update_one' and conf.update_field != '' and conf.new_value != '':
         update.updateOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
-
-    elif conf.operation == 'update_many' and conf.update_field != '' and conf.new_value != '':
-        update.updateMany(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
     
     elif conf.operation == 'update_all' and conf.update_field != '' and conf.new_value != '':
         update.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
 
     elif conf.operation == 'update_with_file' and conf.update_file != '':
         update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
+
+    elif conf.operation == 'restore' and conf.restore_criteria != '' and conf.meta_id != '':
+        restore.restore(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.meta_id, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
@@ -67,7 +67,7 @@ def main():
     if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
-    elif conf.operation == '':
+    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore']:
         print("Operation is missing")
     elif conf.database_name == '':
         print("Database is missing")

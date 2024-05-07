@@ -23,8 +23,8 @@ def insertMeta(db, name, method, operation, collection_name):
         "name": name,
         "operation" : operation,
         "collection": collection_name,
-        "date": datetime.now().strftime('%Y-%m-%dT%H:%M:%S+00:00'),
-        "method": method
+        "method": method, 
+        "date": datetime.now().strftime('%Y-%m-%dT%H:%M:%S+00:00')
     }
     meta_result = meta_collection.insert_one(process_info)
 

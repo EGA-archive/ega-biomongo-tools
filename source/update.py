@@ -93,37 +93,6 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
 
-# Update many function
-def updateMany(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
-    """
-    Update multiple documents in a specific collection based on given criteria
-    """
-    # Access the collection
-    collection = db[collection_name]
-    
-    # Find documents matching the criteria before the update to retrieve the previous values
-    previous_documents = list(collection.find(update_criteria))
-    
-    # Check if the field exists in at least one document matching the criteria
-    if previous_documents and all(update_field in doc for doc in previous_documents):
-        # Insert metadata about the update process
-        process_id = meta.insertMeta(db, name, method, operation, collection_name)
-        
-        # Iterate over each matching document to retrieve previous values and update with metadata
-        for previous_document in previous_documents:
-            # Get the previous value of the field
-            previous_value = previous_document.get(update_field)
-
-            # Update the meta_info field in the JSON document
-            updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
-
-            # Update the document with the new metadata
-            collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
-        
-        print(f'Field {update_field} updated successfully in {len(previous_documents)} documents matching the criteria. New value: {new_value}')
-    else:
-        print(f"The field {update_field} doesn't exist in one or more documents matching the criteria.")
-
 def updateFile(operation, db, collection_name, update_file, name, method):
     """
     Update multiple documents with information from a csv
