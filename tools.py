@@ -75,7 +75,7 @@ def main():
         print("Collection name is missing")
     elif conf.name == '':
         print("Your name is missing")
-    elif conf.name == '':
+    elif conf.method == '':
         print("The method you used to obtain the information is missing")
     else:
         print(f'Operation: {conf.operation}')
