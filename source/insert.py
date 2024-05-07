@@ -70,42 +70,6 @@ def insertMany(operation, db, collection_name, json_documents, name, method):
     # Access the collection:
     collection = db[collection_name]
 
-    print(f"Documents inserted into {collection_name} collection")
-
-    # Insert the document into the collection
-    result = collection.insert_many(documents)
-
-    # Print the inserted document ID
-    print(f"Number of inserted documents: {len(result.inserted_ids)}")
-
-    print("Generating meta information about the process.")
-
-    # Get the ObjectId of the inserted process document
-    process_id = meta.insertMeta(db, name, method, operation, collection_name)
-
-    # Update each inserted document with a reference to the meta document and operation
-    for doc_id in result.inserted_ids:
-        meta_info = [
-            {
-            "meta_id" : str(process_id),
-            "operation": operation
-            }
-        ]
-        # Merge the meta_info with the existing document
-        collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
-
-def insertMany(operation, db, collection_name, json_documents, name, method):
-    """
-    Insert one document in a specific collection from a database.
-    The collection will be created if it doesn't exist.
-    """
-    # Read the JSON file
-    with open(json_documents) as f:
-        documents = json.load(f)
-
-    # Access the collection:
-    collection = db[collection_name]
-
     print(f"Inserting into {collection_name} collection")
 
     # Get the unique identifier or combination of fields for each document
