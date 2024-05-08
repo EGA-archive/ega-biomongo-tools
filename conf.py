@@ -12,7 +12,7 @@ name='' # Name of the person that does this operation
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO)
 
 # General information
-database_name='' # Name of the database (this is in test)
+database_name='' # Name of the database.
 collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study)
 
 # Depending on the operation you should include the relevant information.
