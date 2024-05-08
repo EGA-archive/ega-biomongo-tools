@@ -4,16 +4,15 @@
 
 ####---- Configuration file to operate through BioMongo ----####
 
-# First you should state the operation you need to perform.
+# ----------
+# General information
+# ----------
 operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
-
-# Metadata information
 name='' # Name of the person that does this operation.
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
-
-# General information
 database_name='' # Name of the database.
 collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study).
+
 
 # Depending on the operation you should include the relevant information.
 
