@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 
-"""main.py  :  Run any operation needed in the mongoDB """
-
-__author__ = "Marta Huertas"
-__version__ = "0.1"
-__maintainer__ = "Marta Huertas"
-__email__ = "marta.huertas@crg.eu"
-__status__ = "development"
+"""conf.py  :  Configuration file """
 
 ####---- Configuration file to operate through BioMongo ----####
 
 # First you should state the operation you need to perform.
-operation='restore' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore
+operation='restore' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
 
 # Metadata information
 name='' # Name of the person that does this operation
@@ -26,7 +20,7 @@ collection_name='' # Collection to be managed (analysis, dac, dataset, experimen
 # ---------
 # Insert needs:
 # ----------
-json_documents='path/to/json' # Path to the json documents to be included in the MongoDB
+json_documents=f'path/to/json' # Path to the json documents to be included in the MongoDB
 
 # ----------
 # Update needs:
@@ -35,10 +29,10 @@ update_field='' # Target field to be updated (no need if using a file)
 new_value='' # New value for the field (no need if using a file)
 update_criteria={'field_to_match':'value_to_match'} # Criteria to update one, pick a field with unique values. (no need if using a file)
 # If using update_with_file, please provide the csv with the information
-update_file = 'path/to/update_file'
+update_file = 'path/to/csv'
 
 # ----------
 # Restore needs:
 # ----------
-restore_criteria={'field_to_match':'value_to_match'} # Criteria to reset one file.
+restore_criteria={'field_to_match':'value_to_match'} # Criteria to restore one file.
 meta_id='' # Meta id to the version to be restored.
