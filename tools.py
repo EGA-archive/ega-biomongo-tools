@@ -57,8 +57,8 @@ def run_operation():
     elif conf.operation == 'update_with_file' and conf.update_file != '':
         update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
 
-    elif conf.operation == 'restore' and conf.restore_criteria != '' and conf.meta_id != '':
-        restore.restore(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.meta_id, conf.name, conf.method)
+    elif conf.operation == 'restore_one' and conf.restore_criteria != '' and conf.meta_id != '':
+        restore.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.meta_id, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
@@ -67,16 +67,16 @@ def main():
     if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
-    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore']:
-        print("Operation is missing")
+    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore_one']:
+        print("Operation is missing or wrong.")
     elif conf.database_name == '':
-        print("Database is missing")
+        print("Database is missing.")
     elif conf.collection_name == '':
-        print("Collection name is missing")
+        print("Collection name is missing.")
     elif conf.name == '':
-        print("Your name is missing")
+        print("Your name is missing.")
     elif conf.method == '':
-        print("The method you used to obtain the information is missing")
+        print("The method you used to obtain the information is missing.")
     else:
         print(f'Operation: {conf.operation}')
         print(f'Database: {conf.database_name}')

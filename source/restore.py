@@ -10,7 +10,7 @@ __status__ = "development"
 
 from . import meta
 
-def restore(operation, db, collection_name, reset_criteria, meta_id, name, method):
+def restoreOne(operation, db, collection_name, reset_criteria, meta_id, name, method):
     """
     Reset field in a document to a previous version using meta_info.
     """
