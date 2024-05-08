@@ -27,7 +27,7 @@ json_documents=f'path/to/json' # Path to the json documents to be included in th
 # ----------
 update_field='' # Target field to be updated (no need if using a file)
 new_value='' # New value for the field (no need if using a file)
-update_criteria={'field_to_match':'value_to_match'} # Criteria to update one, pick a field with unique values. (no need if using a file)
+update_criteria={'field_to_match':'value_to_match'} # Criteria to update one, pick a field with unique values.
 # If using update_with_file, please provide the csv with the information
 update_file = 'path/to/csv'
 
