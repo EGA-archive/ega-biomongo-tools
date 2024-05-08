@@ -5,7 +5,7 @@
 ####---- Configuration file to operate through BioMongo ----####
 
 # First you should state the operation you need to perform.
-operation='restore' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
+operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
 
 # Metadata information
 name='' # Name of the person that does this operation
