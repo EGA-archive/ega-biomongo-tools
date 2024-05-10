@@ -9,20 +9,10 @@ __email__ = "marta.huertas@crg.eu"
 __status__ = "development"
 
 from . import meta
-import csv
+import pandas as pd
 import os
 
 # Helper functions
-# Read data from CSV file
-def read_csv(update_file):
-    with open(update_file, 'r') as file:
-        reader = csv.reader(file)
-        # Skip header if present
-        next(reader)
-        # Convert CSV data into a list of lists or list of dictionaries
-        data = [row for row in reader]
-    return data
-
 # Insert one function
 def updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
     """
@@ -92,15 +82,17 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
 
-def updateFile(operation, db, collection_name, update_file, name, method):
+def updateFile(operation, db, collection_name, update_file, update_field, name, method):
     """
     Update multiple documents with information from a csv
     """
     if os.path.exists(update_file):
         # Import the update information
-        update_data = read_csv(update_file)
+        update_data = pd.read_csv(update_file)
+        stable_ids = update_data["stable_id"].values
+        new_values = update_data["new_value"].values
 
-        print(f'There are {len(update_data)} objects to update:')
+        print(f'There are {len(stable_ids)} objects to update:')
 
         # Access the collection:
         collection = db[collection_name]
@@ -109,14 +101,10 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         process_id = meta.insertMeta(db, name, method, operation, collection_name)
         
         # For each row, use the update one functio to modify the specific field stated in the file.
-        for row in update_data:
+        for stable_id, new_value in zip(stable_ids, new_values):
             # Stable id of the object to be updated
-            update_criteria = {'stable_id' : str(row[0])}
-            # Field to update
-            update_field = str(row[1])
-            # New value
-            new_value = str(row[2])
-            
+            update_criteria = {'stable_id' : stable_id}
+
             # Find the document before the update to retrieve the previous value
             previous_document = collection.find_one(update_criteria)
             
