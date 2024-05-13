@@ -12,8 +12,7 @@ from . import meta
 import pandas as pd
 import os
 
-# Helper functions
-# Insert one function
+# Update one function
 def updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
     """
     Update one document in a specific collection from the database
