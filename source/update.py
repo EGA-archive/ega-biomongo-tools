@@ -95,10 +95,23 @@ def updateFile(operation, db, collection_name, update_file, update_field, name, 
 
         # Access the collection:
         collection = db[collection_name]
+
+        # Access or create the files collection:
+        files_collection = db["files"]
         
         # Insert metadata about the update process
         process_id = meta.insertMeta(db, name, method, operation, collection_name)
         
+        # Prepare data for insertion into the files collection
+        files_data = {
+            "meta_id": str(process_id),
+            "stable_ids": stable_ids.tolist(),  # Convert numpy array to Python list
+            update_field: new_values.tolist()  # Convert numpy array to Python list
+        }
+
+         # Insert the data into the files collection
+        files_collection.insert_one(files_data)
+
         # For each row, use the update one functio to modify the specific field stated in the file.
         for stable_id, new_value in zip(stable_ids, new_values):
             # Stable id of the object to be updated
