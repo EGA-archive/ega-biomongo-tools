@@ -81,17 +81,24 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
 
-def updateFile(operation, db, collection_name, update_file, update_field, name, method):
+def updateFile(operation, db, collection_name, update_file, name, method):
     """
     Update multiple documents with information from a csv
     """
     if os.path.exists(update_file):
         # Import the update information
         update_data = pd.read_csv(update_file)
-        stable_ids = update_data["stable_id"].values
-        new_values = update_data["new_value"].values
 
-        print(f'There are {len(stable_ids)} objects to update:')
+        # Get the fields:
+        column_names = update_data.columns.to_list()
+        field_to_match = column_names[0] # The header from the first column will always be the field to match
+        update_field = column_names[1] # The header from the second column will always be the update field
+
+        # Get the values fro the columns
+        values_to_match = update_data[field_to_match].values
+        new_values = update_data[update_field].values
+
+        print(f'There are {len(field_to_match)} objects to update:')
 
         # Access the collection:
         collection = db[collection_name]
@@ -105,7 +112,7 @@ def updateFile(operation, db, collection_name, update_file, update_field, name, 
         # Prepare data for insertion into the files collection
         files_data = {
             "meta_id": str(process_id),
-            "stable_ids": stable_ids.tolist(),  # Convert numpy array to Python list
+            field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
             update_field: new_values.tolist()  # Convert numpy array to Python list
         }
 
@@ -113,9 +120,9 @@ def updateFile(operation, db, collection_name, update_file, update_field, name, 
         files_collection.insert_one(files_data)
 
         # For each row, use the update one functio to modify the specific field stated in the file.
-        for stable_id, new_value in zip(stable_ids, new_values):
+        for value_to_match, new_value in zip(values_to_match, new_values):
             # Stable id of the object to be updated
-            update_criteria = {'stable_id' : stable_id}
+            update_criteria = {field_to_match : value_to_match}
 
             # Find the document before the update to retrieve the previous value
             previous_document = collection.find_one(update_criteria)
