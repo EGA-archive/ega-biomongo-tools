@@ -8,7 +8,7 @@ __maintainer__ = "Marta Huertas"
 __email__ = "marta.huertas@crg.eu"
 __status__ = "development"
 
-from . import meta
+from . import logScript
 import pandas as pd
 import os
 
@@ -27,22 +27,28 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
     if previous_document:
         # Check if the field exists in the document
         if update_field in previous_document:
+            updates_made = 0
             # Get the previous value of the field
             previous_value = previous_document.get(update_field)
 
             # Insert metadata about the update process in the meta collection
-            process_id = meta.insertMeta(db, name, method, operation, collection_name)
+            process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
-            # Update the meta_info field in the JSON document
-            updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
+            # Update the log field in the JSON document
+            updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value)
 
             # Update the document with the new data
-            result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
+            result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "log": updated_log}})
             
             # Print whether the document was updated or not
             if result.modified_count > 0:
+                updates_made += 1
                 print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
                 print('')
+            # If no updates were made, remove the meta and files documents
+            elif updates_made == 0:
+                logScript.deleteLog(db, str(process_id))
+                print("No changes were made.")
         else:
             print(f"The field {update_field} doesn't exist in the document.")
     else:
@@ -59,10 +65,11 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     # Find all documents before the update to retrieve the previous values
     previous_documents = collection.find({})
     
+    updates_made = 0
     # Check if the field exists in at least one document in the collection
     if collection.find_one({update_field: {"$exists": True}}):
         # Insert metadata about the update process
-        process_id = meta.insertMeta(db, name, method, operation, collection_name)
+        process_id = logScript.insertLog(db, name, method, operation, collection_name)
         
         # Iterate over each document to retrieve previous values and update with metadata
         for previous_document in previous_documents:
@@ -71,13 +78,21 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 # Get the previous value of the field
                 previous_value = previous_document.get(update_field)
 
-                # Update the meta_info field in the JSON document
-                updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
+                # Update the log field in the JSON document
+                updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value)
 
                 # Update the document with the new metadata
-                collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
-        
-        print(f'Field {update_field} updated successfully in all the documents. New value: {new_value}')
+                result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "log": updated_log}})
+
+                # Print whether the document was updated or not
+                if result.modified_count > 0:
+                    updates_made += 1
+        # If no updates were made, remove the meta and files documents
+        if updates_made == 0:
+            logScript.deleteLog(db, str(process_id))
+            print("No changes were made.")
+        else:
+            print(f'Field {update_field} updated successfully in all the documents. New value: {new_value}')
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
 
@@ -104,17 +119,17 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         collection = db[collection_name]
 
         # Insert metadata about the update process
-        process_id = meta.insertMeta(db, name, method, operation, collection_name)
+        process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
         # Prepare data for insertion into the files collection
         files_data = {
-            "meta_id": str(process_id),
+            "log_id": str(process_id),
             field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
             update_field: new_values.tolist()  # Convert numpy array to Python list
         }
 
         # Access or create the files collection:
-        files_collection = db["files"]
+        files_collection = db["update_files"]
 
         # Insert the data into the files collection
         files_collection.insert_one(files_data)
@@ -135,13 +150,13 @@ def updateFile(operation, db, collection_name, update_file, name, method):
                     # Get the previous value of the field
                     previous_value = previous_document.get(update_field)
 
-                    # Update the meta_info field in the JSON document
-                    updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field,
+                    # Update the log field in the JSON document
+                    updated_log = logScript.updateLog(previous_document, process_id, operation, update_field,
                                                          previous_value)
 
                     # Update the document with the new data
                     result = collection.update_one(update_criteria,
-                                                   {"$set": {"meta_info": updated_meta_info}})
+                                                   {"$set": {update_field: new_value, "log": updated_log}})
                     
                     # Print whether the document was updated or not
                     if result.modified_count > 0:
@@ -161,10 +176,10 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         # If no updates were made, remove the meta and files documents
         if updates_made == 0:
             files_collection.delete_one({"meta_id": str(process_id)})
-            meta.deleteMeta(db, str(process_id))
+            logScript.deleteLog(db, str(process_id))
             print("No changes were made.")
         else:
             print("Update done!")
 
     else:
-        print(f'{update_file} file does not exist')
+        print(f'{update_file} file does not exist.')

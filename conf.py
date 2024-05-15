@@ -34,4 +34,4 @@ update_file = 'path/to/csv'
 # Restore needs:
 # ----------
 restore_criteria={'field_to_match':'value_to_match'} # Criteria to restore one file.
-meta_id='' # Meta id to the version to be restored.
+log_id='' # Meta id to the version to be restored.

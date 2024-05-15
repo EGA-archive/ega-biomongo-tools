@@ -8,7 +8,7 @@ __maintainer__ = "Marta Huertas"
 __email__ = "marta.huertas@crg.eu"
 __status__ = "development"
 
-from . import meta
+from . import logScript
 
 def restoreOne(operation, db, collection_name, reset_criteria, meta_id, name, method):
     """
@@ -22,7 +22,7 @@ def restoreOne(operation, db, collection_name, reset_criteria, meta_id, name, me
 
     if document: # If the specific document we want to restore exists:
         # Insert metadata about the reset process in the meta collection
-        process_id = meta.insertMeta(db, name, method, operation, collection_name)
+        process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
         # Retrieve the 'meta_info' field
         meta_info = document.get('meta_info', [])

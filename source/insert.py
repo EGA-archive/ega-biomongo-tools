@@ -11,7 +11,7 @@ __status__ = "development"
 
 # Import Packages
 import json
-from . import meta
+from . import logScript
 import os
 
 # Insert one function
@@ -44,20 +44,21 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
             # Print the inserted document ID
             print("Inserted document ID:", result.inserted_id)
 
-            print("Generating meta information about the process.")
+            if result:
+                # Get the ObjectId of the inserted process document
+                process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
-            # Get the ObjectId of the inserted process document
-            process_id = meta.insertMeta(db, name, method, operation, collection_name)
-
-            # Update inserted document with a reference to the meta document and operation
-            meta_info = [
-                {
-                "meta_id" : str(process_id),
-                "operation": operation
-                }
-            ]
-            # Merge the meta_info with the existing document
-            collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
+                # Update inserted document with a reference to the log document and operation
+                log = [
+                    {
+                    "log_id" : str(process_id),
+                    "operation": operation
+                    }
+                ]
+                # Merge the log with the existing document
+                collection.update_one({"_id": doc_id}, {"$set": {"log": log}})
+            else:
+                print("Document could not be inserted.")
     else:
         print(f'{json_documents} file does not exist')
 
@@ -92,25 +93,29 @@ def insertMany(operation, db, collection_name, json_documents, name, method):
         print(f"{len(existing_identifiers)} of your documents already exist in the {collection_name} collection.")
         # Insert only new documents into the collection
         if new_documents:
-            result = collection.insert_many(new_documents)
-
-            # Print the number of inserted documents
-            print(f"Number of inserted documents: {len(result.inserted_ids)}")
-
-            print("Generating meta information about the process.")
             # Get the ObjectId of the inserted process document
-            process_id = meta.insertMeta(db, name, method, operation, collection_name)
+            process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
-            # Update each inserted document with a reference to the meta document and operation
-            for doc_id in result.inserted_ids:
-                meta_info = [
-                    {
-                        "meta_id": str(process_id),
-                        "operation": operation
-                    }
-                ]
-                # Merge the meta_info with the existing document
-                collection.update_one({"_id": doc_id}, {"$set": {"meta_info": meta_info}})
+            if process_id:
+                result = collection.insert_many(new_documents)
+
+                # Print the number of inserted documents
+                print(f"Number of inserted documents: {len(result.inserted_ids)}")
+
+
+                # Update each inserted document with a reference to the log document and operation
+                print("Generating log information about the process.")
+                for doc_id in result.inserted_ids:
+                    log = [
+                        {
+                            "log_id": str(process_id),
+                            "operation": operation
+                        }
+                    ]
+                    # Merge the log with the existing document
+                    collection.update_one({"_id": doc_id}, {"$set": {"log": log}})
+            else:
+                print("Log details was not generated.")
         else:
             print("No new documents to insert.")
     else:
