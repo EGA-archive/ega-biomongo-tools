@@ -91,24 +91,21 @@ def updateFile(operation, db, collection_name, update_file, name, method):
 
         # Get the fields:
         column_names = update_data.columns.to_list()
-        field_to_match = column_names[0] # The header from the first column will always be the field to match
-        update_field = column_names[1] # The header from the second column will always be the update field
+        field_to_match = column_names[0]  # The header from the first column will always be the field to match
+        update_field = column_names[1]  # The header from the second column will always be the update field
 
-        # Get the values fro the columns
+        # Get the values from the columns
         values_to_match = update_data[field_to_match].values
         new_values = update_data[update_field].values
 
-        print(f'There are {len(field_to_match)} objects to update:')
+        print(f'There are {len(values_to_match)} objects to update:')
 
         # Access the collection:
         collection = db[collection_name]
 
-        # Access or create the files collection:
-        files_collection = db["files"]
-        
         # Insert metadata about the update process
         process_id = meta.insertMeta(db, name, method, operation, collection_name)
-        
+
         # Prepare data for insertion into the files collection
         files_data = {
             "meta_id": str(process_id),
@@ -116,17 +113,21 @@ def updateFile(operation, db, collection_name, update_file, name, method):
             update_field: new_values.tolist()  # Convert numpy array to Python list
         }
 
-         # Insert the data into the files collection
+        # Access or create the files collection:
+        files_collection = db["files"]
+
+        # Insert the data into the files collection
         files_collection.insert_one(files_data)
 
-        # For each row, use the update one functio to modify the specific field stated in the file.
+        # For each row, use the update one function to modify the specific field stated in the file.
+        updates_made = 0
         for value_to_match, new_value in zip(values_to_match, new_values):
             # Stable id of the object to be updated
-            update_criteria = {field_to_match : value_to_match}
+            update_criteria = {field_to_match: value_to_match}
 
             # Find the document before the update to retrieve the previous value
             previous_document = collection.find_one(update_criteria)
-            
+
             # Check if the document with the specified criteria exists in the collection
             if previous_document:
                 # Check if the field exists in the document
@@ -135,19 +136,35 @@ def updateFile(operation, db, collection_name, update_file, name, method):
                     previous_value = previous_document.get(update_field)
 
                     # Update the meta_info field in the JSON document
-                    updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field, previous_value)
+                    updated_meta_info = meta.updateMeta(previous_document, process_id, operation, update_field,
+                                                         previous_value)
 
                     # Update the document with the new data
-                    result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "meta_info": updated_meta_info}})
+                    result = collection.update_one(update_criteria,
+                                                   {"$set": {"meta_info": updated_meta_info}})
                     
                     # Print whether the document was updated or not
                     if result.modified_count > 0:
+                        updates_made += 1
                         print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
                         print('')
+                    else:
+                        print(f'Field {update_field} in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]} remains unchanged.')
+                        print('')
+
                 else:
                     print(f"The field {update_field} doesn't exist in the document.")
+
             else:
-                print(f"The document you are searching for is not in the collection.") 
-        print("Update done!")
+                print(f"The document you are searching for is not in the collection.")
+
+        # If no updates were made, remove the meta and files documents
+        if updates_made == 0:
+            files_collection.delete_one({"meta_id": str(process_id)})
+            meta.deleteMeta(db, str(process_id))
+            print("No changes were made.")
+        else:
+            print("Update done!")
+
     else:
         print(f'{update_file} file does not exist')

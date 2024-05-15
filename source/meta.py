@@ -11,6 +11,7 @@ __status__ = "development"
 
 # Import Packages
 from datetime import datetime
+from bson.objectid import ObjectId
 
 def insertMeta(db, name, method, operation, collection_name):
     """
@@ -49,4 +50,12 @@ def updateMeta(previous_document, process_id, operation, update_field, previous_
     existing_meta_info.insert(0, new_meta_info)
 
     return existing_meta_info
+
+def deleteMeta(db, process_id):
+    """
+    Delete metadata document from the database based on process_id
+    """
+    meta_collection = db["meta"]  # Assuming "meta" is the name of your metadata collection
+    result = meta_collection.delete_one({"_id": ObjectId(process_id)})
+    
 
