@@ -26,4 +26,10 @@ pip install -r requirements.txt
 
 BioMongo tools should be as easy to use as possible. The only thing you need to do is to modify the [conf.py](https://github.com/m-huertasp/ega-biomongo-tools/blob/main/conf.py) file taking into account your needs.
 
+Then, the only command you'll need is:
+
+```
+python3 tools.py
+```
+
 To understand how to use the tool, I have written some use cases explained [here](https://docs.google.com/document/d/1rVnTp6rVefees6J4kwp1Thaq4HapLysS452wy5mUuKM/edit?usp=sharing).
