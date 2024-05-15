@@ -57,8 +57,8 @@ def run_operation():
     elif conf.operation == 'update_with_file' and conf.update_file != '':
         update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
 
-    elif conf.operation == 'restore_one' and conf.restore_criteria != '' and conf.meta_id != '':
-        restore.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.meta_id, conf.name, conf.method)
+    elif conf.operation == 'restore_one' and conf.restore_criteria != '' and conf.log_id != '':
+        restore.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.log_id, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
