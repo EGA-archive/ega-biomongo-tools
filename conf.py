@@ -7,11 +7,11 @@
 # ----------
 # General information
 # ----------
-operation='update_with_file' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
-name='Marta' # Name of the person that does this operation.
-method='x' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
-database_name='mhuertas' # Name of the database.
-collection_name='analysis' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study).
+operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
+name='' # Name of the person that does this operation.
+method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
+database_name='' # Name of the database.
+collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study).
 
 
 # Depending on the operation you should include the relevant information.
@@ -28,7 +28,7 @@ update_field='' # Target field to be updated.
 new_value='' # New value for the field (no need if using a file).
 update_criteria={'field_to_match':'value_to_match'} # Criteria to update one, pick a field with unique values.
 # If using update_with_file, please provide the csv with the information.
-update_file = './update_example.csv'
+update_file = 'path/to/csv'
 
 # ----------
 # Restore needs:
