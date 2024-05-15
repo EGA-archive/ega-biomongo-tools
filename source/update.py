@@ -35,7 +35,7 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             process_id = logScript.insertLog(db, name, method, operation, collection_name)
 
             # Update the log field in the JSON document
-            updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value)
+            updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
 
             # Update the document with the new data
             result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "log": updated_log}})
@@ -79,7 +79,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 previous_value = previous_document.get(update_field)
 
                 # Update the log field in the JSON document
-                updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value)
+                updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
 
                 # Update the document with the new metadata
                 result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "log": updated_log}})
@@ -152,7 +152,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
 
                     # Update the log field in the JSON document
                     updated_log = logScript.updateLog(previous_document, process_id, operation, update_field,
-                                                         previous_value)
+                                                         previous_value, new_value)
 
                     # Update the document with the new data
                     result = collection.update_one(update_criteria,

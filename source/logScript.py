@@ -31,7 +31,7 @@ def insertLog(db, name, method, operation, collection_name):
 
     return log_result.inserted_id
 
-def updateLog(previous_document, process_id, operation, update_field, previous_value):
+def updateLog(previous_document, process_id, operation, update_field, previous_value, new_value):
     """
     Update already generated log field
     """
@@ -43,7 +43,8 @@ def updateLog(previous_document, process_id, operation, update_field, previous_v
         "log_id" : str(process_id),
         "operation": operation,
         "modified_field": update_field,
-        "previous_value": previous_value
+        "previous_value": previous_value,
+        "new_value": new_value
     }
 
     # Merge the new metadata with the existing log
