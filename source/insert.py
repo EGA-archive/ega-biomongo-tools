@@ -11,7 +11,7 @@ __status__ = "development"
 
 # Import Packages
 import json
-from . import logScript
+from . import log_functions
 import os
 
 # Insert one function
@@ -46,7 +46,7 @@ def insertOne(operation, db, collection_name, json_documents, name, method):
 
             if result:
                 # Get the ObjectId of the inserted process document
-                process_id = logScript.insertLog(db, name, method, operation, collection_name)
+                process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
                 # Update inserted document with a reference to the log document and operation
                 log = [
@@ -94,7 +94,7 @@ def insertMany(operation, db, collection_name, json_documents, name, method):
         # Insert only new documents into the collection
         if new_documents:
             # Get the ObjectId of the inserted process document
-            process_id = logScript.insertLog(db, name, method, operation, collection_name)
+            process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
             if process_id:
                 result = collection.insert_many(new_documents)

@@ -8,7 +8,7 @@ __maintainer__ = "Marta Huertas"
 __email__ = "marta.huertas@crg.eu"
 __status__ = "development"
 
-from . import logScript
+from . import log_functions
 import pandas as pd
 import os
 
@@ -32,10 +32,10 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             previous_value = previous_document.get(update_field)
 
             # Insert metadata about the update process in the meta collection
-            process_id = logScript.insertLog(db, name, method, operation, collection_name)
+            process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
             # Update the log field in the JSON document
-            updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
+            updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
 
             # Update the document with the new data
             result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "log": updated_log}})
@@ -47,7 +47,7 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
                 print('')
             # If no updates were made, remove the meta and files documents
             elif updates_made == 0:
-                logScript.deleteLog(db, str(process_id))
+                log_functions.deleteLog(db, str(process_id))
                 print("No changes were made.")
         else:
             print(f"The field {update_field} doesn't exist in the document.")
@@ -69,7 +69,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     # Check if the field exists in at least one document in the collection
     if collection.find_one({update_field: {"$exists": True}}):
         # Insert metadata about the update process
-        process_id = logScript.insertLog(db, name, method, operation, collection_name)
+        process_id = log_functions.insertLog(db, name, method, operation, collection_name)
         
         # Iterate over each document to retrieve previous values and update with metadata
         for previous_document in previous_documents:
@@ -79,7 +79,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 previous_value = previous_document.get(update_field)
 
                 # Update the log field in the JSON document
-                updated_log = logScript.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
+                updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
 
                 # Update the document with the new metadata
                 result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "log": updated_log}})
@@ -89,7 +89,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                     updates_made += 1
         # If no updates were made, remove the meta and files documents
         if updates_made == 0:
-            logScript.deleteLog(db, str(process_id))
+            log_functions.deleteLog(db, str(process_id))
             print("No changes were made.")
         else:
             print(f'Field {update_field} updated successfully in all the documents. New value: {new_value}')
@@ -119,7 +119,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         collection = db[collection_name]
 
         # Insert metadata about the update process
-        process_id = logScript.insertLog(db, name, method, operation, collection_name)
+        process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
         # Prepare data for insertion into the files collection
         files_data = {
@@ -151,7 +151,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
                     previous_value = previous_document.get(update_field)
 
                     # Update the log field in the JSON document
-                    updated_log = logScript.updateLog(previous_document, process_id, operation, update_field,
+                    updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field,
                                                          previous_value, new_value)
 
                     # Update the document with the new data
@@ -176,7 +176,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         # If no updates were made, remove the meta and files documents
         if updates_made == 0:
             files_collection.delete_one({"meta_id": str(process_id)})
-            logScript.deleteLog(db, str(process_id))
+            log_functions.deleteLog(db, str(process_id))
             print("No changes were made.")
         else:
             print("Update done!")
