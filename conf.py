@@ -7,7 +7,7 @@
 # ----------
 # General information
 # ----------
-operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one
+operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one, add_empty_field
 name='' # Name of the person that does this operation.
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
 database_name='' # Name of the database.
@@ -34,9 +34,9 @@ update_file = 'path/to/csv'
 # Restore needs:
 # ----------
 restore_criteria={'field_to_match':'value_to_match'} # Criteria to restore one file.
-log_id='' # Meta id to the version to be restored.
+log_id='' # Log id to the version to be restored.
 
 # ---------
 # Add new field needs:
 # ----------
-new_field=''
+new_field='' # Name of the new field to be added. Please do not use empty spaces or special characters
