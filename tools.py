@@ -63,6 +63,9 @@ def run_operation():
     elif conf.operation == 'add_empty_field' and conf.new_field != '':
         new_field.addNullField(conf.operation, db, conf.collection_name, conf.new_field, conf.name, conf.method)
 
+    elif conf.operation == 'add_field_with_file' and conf.new_field_file != '':
+        new_field.addFieldFile(conf.operation, db, conf.collection_name, conf.new_field_file, conf.name, conf.method)
+
     else:
         print('Something is missing in the conf.py file')
 
@@ -70,7 +73,7 @@ def main():
     if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
-    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore_one', 'add_empty_field']:
+    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore_one', 'add_empty_field', 'add_field_with_file']:
         print("Operation is missing or wrong.")
     elif conf.database_name == '':
         print("Database is missing.")

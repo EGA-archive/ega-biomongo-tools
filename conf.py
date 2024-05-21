@@ -41,4 +41,4 @@ log_id='' # Log id to the version to be restored.
 # ----------
 new_field='' # Name of the new field to be added. Please do not use empty spaces or special characters
 # If using add_field_with_file, please provide the csv with the information. The structure should be the same as the update file.
-field_file='path/to/csv'
+new_field_file='path/to/csv'
