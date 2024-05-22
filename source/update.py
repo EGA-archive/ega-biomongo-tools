@@ -124,6 +124,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         # Prepare data for insertion into the files collection
         files_data = {
             "log_id": str(process_id),
+            "operation": operation,
             field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
             update_field: new_values.tolist()  # Convert numpy array to Python list
         }

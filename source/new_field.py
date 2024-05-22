@@ -84,6 +84,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
         # Prepare data for insertion into the files collection
         files_data = {
             "log_id": str(process_id),
+            "operation": operation,
             field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
             new_field: new_values.tolist()  # Convert numpy array to Python list
         }
