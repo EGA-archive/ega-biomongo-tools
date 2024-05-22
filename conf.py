@@ -7,7 +7,7 @@
 # ----------
 # General information
 # ----------
-operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one, add_empty_field, add_field_with_file
+operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one, restore_all, add_empty_field, add_field_with_file
 name='' # Name of the person that does this operation.
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
 database_name='' # Name of the database.
