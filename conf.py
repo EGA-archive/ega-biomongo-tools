@@ -11,7 +11,7 @@ operation='' # Operations: insert_one, insert_many, update_one, update_all, upda
 name='' # Name of the person that does this operation.
 method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
 database_name='' # Name of the database.
-collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, policy, run, sample, study).
+collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, file, policy, run, sample, study).
 
 
 # Depending on the operation you should include the relevant information.
