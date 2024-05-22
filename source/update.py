@@ -108,7 +108,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         column_names = update_data.columns.to_list()
         field_to_match = column_names[0]  # The header from the first column will always be the field to match
         update_field = column_names[1]  # The header from the second column will always be the update field
-
+        
         # Get the values from the columns
         values_to_match = update_data[field_to_match].values
         new_values = update_data[update_field].values
@@ -138,6 +138,10 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         # For each row, use the update one function to modify the specific field stated in the file.
         updates_made = 0
         for value_to_match, new_value in zip(values_to_match, new_values):
+
+            # Convert new_value to a list if it contains a semicolon, otherwise use it as is
+            new_value_list = new_value.split(";") if ";" in new_value else new_value
+
             # Stable id of the object to be updated
             update_criteria = {field_to_match: value_to_match}
 
@@ -153,11 +157,11 @@ def updateFile(operation, db, collection_name, update_file, name, method):
 
                     # Update the log field in the JSON document
                     updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field,
-                                                         previous_value, new_value)
+                                                         previous_value, new_value_list)
 
                     # Update the document with the new data
                     result = collection.update_one(update_criteria,
-                                                   {"$set": {update_field: new_value, "log": updated_log}})
+                                                   {"$set": {update_field: new_value_list, "log": updated_log}})
                     
                     # Print whether the document was updated or not
                     if result.modified_count > 0:
