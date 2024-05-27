@@ -1,6 +1,6 @@
 # BioMongoDB tools
 
-BioMongoDB is envisioned as a MongoDB database to facilitate the storage of information derived from various initiatives within the BioTeam.
+BioMongoDB is envisioned as a MongoDB database to facilitate the storage of information derived from various initiatives within the BioTeam. Find more information [here](https://docs.google.com/document/d/1KPLOE37bp4U5Xd9N6s6-_-UqPOZ4vRo5ZMlPvMinoxo/edit?usp=drive_link).
 
 BioMongo tools is a set of tools designed to manage the BioMongo database. The tools provided here facilitate the manage of information (insertion of information, update of information, etc.) in the BioMongoDB and maintain a log of these changes within the database itself. This new collection will be named `log_details`.
 
