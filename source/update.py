@@ -34,11 +34,14 @@ def updateOne(operation, db, collection_name, update_criteria, update_field, new
             # Insert metadata about the update process in the meta collection
             process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
+            # Convert new_value to a list if it contains a semicolon, otherwise use it as is
+            new_value_list = new_value.split(";") if ";" in new_value else new_value
+
             # Update the log field in the JSON document
-            updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
+            updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value_list)
 
             # Update the document with the new data
-            result = collection.update_one(update_criteria, {"$set": {update_field: new_value, "log": updated_log}})
+            result = collection.update_one(update_criteria, {"$set": {update_field: new_value_list, "log": updated_log}})
             
             # Print whether the document was updated or not
             if result.modified_count > 0:
@@ -78,11 +81,14 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
                 # Get the previous value of the field
                 previous_value = previous_document.get(update_field)
 
+                # Convert new_value to a list if it contains a semicolon, otherwise use it as is
+                new_value_list = new_value.split(";") if ";" in new_value else new_value
+
                 # Update the log field in the JSON document
-                updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value)
+                updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value_list)
 
                 # Update the document with the new metadata
-                result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value, "log": updated_log}})
+                result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value_list, "log": updated_log}})
 
                 # Print whether the document was updated or not
                 if result.modified_count > 0:
@@ -92,7 +98,7 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
             log_functions.deleteLog(db, str(process_id))
             print("No changes were made.")
         else:
-            print(f'Field {update_field} updated successfully in all the documents. New value: {new_value}')
+            print(f'Field {update_field} updated successfully in all the documents. New value: {new_value_list}')
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
 
