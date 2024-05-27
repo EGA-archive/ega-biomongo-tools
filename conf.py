@@ -7,11 +7,11 @@
 # ----------
 # General information
 # ----------
-operation='insert_many' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one, restore_all, add_empty_field, add_field_with_file, rename_field
-name='Marta' # Name of the person that does this operation.
-method='Testing insert many bulk' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
-database_name='mhuertas' # Name of the database.
-collection_name='experiment' # Collection to be managed (analysis, dac, dataset, experiment, file, policy, run, sample, study).
+operation='' # Operations: insert_one, insert_many, update_one, update_all, update_with_file, restore_one, restore_all, add_empty_field, add_field_with_file, rename_field
+name='' # Name of the person that does this operation.
+method='' # Method used to obtain or modify the data (e.g. Raw data EGAPRO).
+database_name='' # Name of the database.
+collection_name='' # Collection to be managed (analysis, dac, dataset, experiment, file, policy, run, sample, study).
 
 
 # Depending on the operation you should include the relevant information.
@@ -19,7 +19,7 @@ collection_name='experiment' # Collection to be managed (analysis, dac, dataset,
 # ---------
 # Insert needs:
 # ----------
-json_documents=f'./test_metadata/experiment/experiment_0.json' # Path to the json documents to be included in the MongoDB.
+json_documents=f'path/to/json' # Path to the json documents to be included in the MongoDB.
 
 # ----------
 # Update needs (update_field is always needed):
