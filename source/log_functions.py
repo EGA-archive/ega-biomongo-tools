@@ -56,7 +56,7 @@ def deleteLog(db, process_id):
     """
     Delete metadata document from the database based on process_id
     """
-    meta_collection = db["log_details"]  # Assuming "meta" is the name of your metadata collection
-    result = meta_collection.delete_one({"_id": ObjectId(process_id)})
+    log_collection = db["log_details"]  # Assuming "meta" is the name of your metadata collection
+    result = log_collection.delete_one({"_id": ObjectId(process_id)})
     
 

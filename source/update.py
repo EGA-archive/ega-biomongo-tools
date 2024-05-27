@@ -11,6 +11,7 @@ __status__ = "development"
 from . import log_functions
 import pandas as pd
 import os
+from pymongo import UpdateOne
 
 # Update one function
 def updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
@@ -62,45 +63,50 @@ def updateAll(operation, db, collection_name, update_field, new_value, name, met
     """
     Update all documents in a specific collection from the database
     """
-    # Access the collection:
+    # Access the collection
     collection = db[collection_name]
 
-    # Find all documents before the update to retrieve the previous values
-    previous_documents = collection.find({})
-    
-    updates_made = 0
+    # Convert new_value to a list if it contains a semicolon, otherwise use it as is
+    new_value_list = new_value.split(";") if ";" in new_value else new_value
+
     # Check if the field exists in at least one document in the collection
     if collection.find_one({update_field: {"$exists": True}}):
         # Insert metadata about the update process
         process_id = log_functions.insertLog(db, name, method, operation, collection_name)
         
-        # Iterate over each document to retrieve previous values and update with metadata
+        # Prepare a list of bulk update operations
+        bulk_updates = []
+        previous_documents = collection.find({update_field: {"$exists": True}})
+        
         for previous_document in previous_documents:
-            # Check if the field exists in the document
-            if update_field in previous_document:
-                # Get the previous value of the field
-                previous_value = previous_document.get(update_field)
+            # Get the previous value of the field
+            previous_value = previous_document.get(update_field)
 
-                # Convert new_value to a list if it contains a semicolon, otherwise use it as is
-                new_value_list = new_value.split(";") if ";" in new_value else new_value
+            # Update the log field in the JSON document
+            updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value_list)
 
-                # Update the log field in the JSON document
-                updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, previous_value, new_value_list)
+            # Create the update operation
+            bulk_updates.append(UpdateOne(
+                {"_id": previous_document["_id"]},
+                {"$set": {update_field: new_value_list, "log": updated_log}}
+            ))
 
-                # Update the document with the new metadata
-                result = collection.update_one({"_id": previous_document["_id"]}, {"$set": {update_field: new_value_list, "log": updated_log}})
+        # Execute the bulk update operations
+        if bulk_updates:
+            result = collection.bulk_write(bulk_updates)
+            updates_made = result.modified_count
 
-                # Print whether the document was updated or not
-                if result.modified_count > 0:
-                    updates_made += 1
-        # If no updates were made, remove the meta and files documents
-        if updates_made == 0:
+            if updates_made == 0:
+                log_functions.deleteLog(db, str(process_id))
+                print("No changes were made.")
+            else:
+                print(f'Field {update_field} updated successfully in all the documents. New value: {new_value_list}')
+        else:
             log_functions.deleteLog(db, str(process_id))
             print("No changes were made.")
-        else:
-            print(f'Field {update_field} updated successfully in all the documents. New value: {new_value_list}')
     else:
         print(f"The field {update_field} doesn't exist in any document in the collection.")
+
 
 def updateFile(operation, db, collection_name, update_file, name, method):
     """
