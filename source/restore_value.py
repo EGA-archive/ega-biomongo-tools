@@ -12,7 +12,7 @@ from . import log_functions
 
 def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, method):
     """
-    Reset field in a document to a previous version using log.
+    Reset a field in a document to a previous version using log.
     """
     # Access the collection:
     collection = db[collection_name]
@@ -20,56 +20,67 @@ def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, met
     # Find the document
     document = collection.find_one(reset_criteria)
 
-    if document: # If the specific document we want to restore exists:
-        # Insert metadata about the reset process in the meta collection
-        process_id = log_functions.insertLog(db, name, method, operation, collection_name)
-
-        # Retrieve the 'meta_info' field
-        log = document.get('log', [])
-
-        # Find the index of the desired version in the 'meta_info' array
-        log_test = False # Test if the meta_id exists
-        for update in log:
-            if update.get('log_id') == log_id:
-                log_test = True
-                if 'update' in update.get('operation'):
-                    # Get the field and value to restore
-                    update_field = update.get('modified_field')
-                    new_value = update.get('previous_value')
-                    previous_value = document.get(update_field)
-
-                    if log_test:
-                        # Delete log instance for the specific log_id
-                        updated_log_info = [update for update in log if update.get('log_id') != log_id]
-
-                        # Define the new metadata to be added
-                        new_log_info = {
-                            "log_id": str(process_id),
-                            "operation": operation,
-                            "previous_log_id": log_id,
-                            "modified_field": update_field, 
-                            "previous_value": previous_value,
-                            "restored_value": new_value,
-                        }
-
-                        # Merge the new metadata with the existing log_info
-                        updated_log_info.insert(0, new_log_info)
-
-                        # Update the document with the new data
-                        result = collection.update_one(reset_criteria, {"$set": {update_field: new_value, "log": updated_log_info}})
-
-                        print(f'Document restored to version with id: {log_id}.')
-                    else:
-                        print('Meta id not found in this document. No change made.')
-                else: 
-                    print('Insert operations cannot be restored.')
-    else:
+    if not document:
         print('The document you are searching for is not in the collection.')
+        return
+
+    # Insert metadata about the reset process in the meta collection
+    process_id = log_functions.insertLog(db, name, method, operation, collection_name)
+    if not process_id:
+        print('Failed to create log for the reset process.')
+        return
+
+    # Retrieve the 'log' field
+    log_entries = document.get('log', [])
+
+    # Find the log entry to restore
+    log_entry = next((entry for entry in log_entries if entry.get('log_id') == log_id), None)
+
+    if not log_entry:
+        log_functions.deleteLog(db, str(process_id))
+        print(f'The log_id: {log_id} does not exist in the document.')
+        return
+
+    if 'update' not in log_entry.get('operation'):
+        log_functions.deleteLog(db, str(process_id))
+        print('Only update operations can be restored.')
+        return
+
+    # Get the field and value to restore
+    update_field = log_entry.get('modified_field')
+    new_value = log_entry.get('previous_value')
+    previous_value = document.get(update_field)
+
+    # Remove the log entry being restored
+    updated_log_entries = [entry for entry in log_entries if entry.get('log_id') != log_id]
+
+    # Add a new log entry for the restore operation
+    new_log_entry = {
+        "log_id": str(process_id),
+        "operation": operation,
+        "previous_log_id": log_id,
+        "modified_field": update_field,
+        "previous_value": previous_value,
+        "restored_value": new_value,
+    }
+
+    updated_log_entries.insert(0, new_log_entry)
+
+    # Update the document with the restored value and new log entry
+    result = collection.update_one(reset_criteria, {"$set": {update_field: new_value, "log": updated_log_entries}})
+    # Check the number of documents updated
+    updates_made = result.modified_count
+
+    if updates_made > 0:
+        print(f'Document restored to version with id: {log_id}.')
+    else:
+        log_functions.deleteLog(db, str(process_id))
+        print("No changes were made.")
 
 
 def restoreAll(operation, db, collection_name, log_id, name, method):
     """
-    Reset field in all documents in the collection to a previous version using log_id.
+    Reset a field in all documents in the collection to a previous version using log_id.
     """
     # Access the collection:
     collection = db[collection_name]
@@ -80,50 +91,56 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
     # Insert metadata about the reset process in the meta collection
     process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
-    restored_documents = 0
-    for document in documents:
+    if not process_id:
+        print('Failed to create log for the reset process.')
+        return
 
+    restored_documents = 0
+    update_field = None
+
+    for document in documents:
         # Retrieve the 'log' field
         log = document.get('log', [])
         # Find the update corresponding to the desired log_id
-        log_test = False  # Test if the log_id exists in the document
         for update in log:
             if update.get('log_id') == log_id:
-                log_test = True
-                if log_test:
-                    if 'update' in update.get('operation'):
-                        # Get the field and value to restore
-                        update_field = update.get('modified_field')
-                        previous_value = document.get(update_field)
-                        new_value = update.get('previous_value')
+                if 'update' in update.get('operation'):
+                    # Get the field and value to restore
+                    update_field = update.get('modified_field')
+                    previous_value = document.get(update_field)
+                    new_value = update.get('previous_value')
 
-                        if log_test:
-                            # Delete log instance for the specific log_id
-                            updated_log_info = [update for update in log if update.get('log_id') != log_id]
+                    # Delete log instance for the specific log_id
+                    updated_log_info = [entry for entry in log if entry.get('log_id') != log_id]
 
-                            # Define the new metadata to be added
-                            new_log_info = {
-                                "log_id": str(process_id),
-                                "operation": operation,
-                                "previous_log_id": log_id,
-                                "modified_field": update_field, 
-                                "previous_value": previous_value,
-                                "restored_value": new_value,
-                            }
+                    # Define the new metadata to be added
+                    new_log_info = {
+                        "log_id": str(process_id),
+                        "operation": operation,
+                        "previous_log_id": log_id,
+                        "modified_field": update_field,
+                        "previous_value": previous_value,
+                        "restored_value": new_value,
+                    }
 
-                            # Merge the new metadata with the existing log_info
-                            updated_log_info.insert(0, new_log_info)
+                    # Merge the new metadata with the existing log_info
+                    updated_log_info.insert(0, new_log_info)
 
-                            # Update the document with the new data
-                            result = collection.update_one(
-                                {"_id": document["_id"]},
-                                {"$set": {update_field: new_value, "log": updated_log_info}}
-                            )
+                    # Update the document with the new data
+                    result = collection.update_one(
+                        {"_id": document["_id"]},
+                        {"$set": {update_field: new_value, "log": updated_log_info}}
+                    )
 
-                            restored_documents += 1 
-                        
-                    else:
-                        print(f'Only update operations can be restored.')
+                    if result.modified_count > 0:
+                        restored_documents += 1
+                else:
+                    print('Only update operations can be restored.')
                 break  # Exit the loop once the correct log_id is found and processed
-    
-    print(f'Field {update_field} restored successfully in {restored_documents} documents.')
+
+    if restored_documents == 0:
+        log_functions.deleteLog(db, str(process_id))
+        print("No changes were made.")
+    else:
+        print(f'Field {update_field} restored successfully in {restored_documents} documents.')
+
