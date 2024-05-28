@@ -11,6 +11,9 @@ __status__ = "development"
 from . import log_functions
 from pymongo import UpdateOne
 
+
+# CONSIDERATIONS:
+# IT IS IMPORTANT TO KNOW THAT YOU WILL REMOVE THE FIELD FROM ALL THE DOCUMENTS IN A COLLECTION
 def ask_user(prompt):
     """
     Ask the user a yes/no question and return True for 'yes' and False for 'no'.
@@ -24,8 +27,6 @@ def ask_user(prompt):
         else:
             print("Please answer 'yes' or 'no'.")
 
-# CONSIDERATIONS:
-# IT IS IMPORTANT TO KNOW THAT YOU WILL REMOVE THE FIELD FROM ALL THE DOCUMENTS IN A COLLECTION
 def removeField(operation, db, collection_name, field_to_remove, name, method):
     """
     Remove a specific field in all the documents of a collection.
