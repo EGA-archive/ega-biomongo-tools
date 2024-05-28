@@ -12,7 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import insert, restore, update, new_field, rename, mongoConnection
+from source import insert, rename_field, restore_value, new_field, mongoConnection, update_value
 
 # Functions
 def print_help():
@@ -49,19 +49,19 @@ def run_operation():
         insert.insertMany(conf.operation, db, conf.collection_name, conf.json_documents, conf.name, conf.method)
     
     elif conf.operation == 'update_one' and conf.update_field != '' and conf.new_value != '':
-        update.updateOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
+        update_value.updateOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
     
     elif conf.operation == 'update_all' and conf.update_field != '' and conf.new_value != '':
-        update.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
+        update_value.updateAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
 
     elif conf.operation == 'update_with_file' and conf.update_file != '':
-        update.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
+        update_value.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
 
     elif conf.operation == 'restore_one' and conf.restore_criteria != '' and conf.log_id != '':
-        restore.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.log_id, conf.name, conf.method)
+        restore_value.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.log_id, conf.name, conf.method)
 
     elif conf.operation == 'restore_all' and conf.log_id != '':
-        restore.restoreAll(conf.operation, db, conf.collection_name, conf.log_id, conf.name, conf.method)
+        restore_value.restoreAll(conf.operation, db, conf.collection_name, conf.log_id, conf.name, conf.method)
 
     elif conf.operation == 'add_empty_field' and conf.new_field != '':
         new_field.addNullField(conf.operation, db, conf.collection_name, conf.new_field, conf.name, conf.method)
@@ -70,10 +70,10 @@ def run_operation():
         new_field.addFieldFile(conf.operation, db, conf.collection_name, conf.new_field_file, conf.name, conf.method)
 
     elif conf.operation == 'rename_field' and conf.field_name != '' and conf.new_field_name != '':
-        rename.renameField(conf.operation, db, conf.collection_name, conf.field_name, conf.new_field_name, conf.name, conf.method)
+        rename_field.renameField(conf.operation, db, conf.collection_name, conf.field_name, conf.new_field_name, conf.name, conf.method)
 
     elif conf.operation == 'remove_field' and conf.field_to_remove != '':
-        rename.renameField(conf.operation, db, conf.collection_name, conf.field_to_remove, conf.name, conf.method)
+        rename_field.renameField(conf.operation, db, conf.collection_name, conf.field_to_remove, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
