@@ -49,3 +49,9 @@ new_field_file='path/to/csv'
 # ----------
 field_name='' # Name of the field to be changed.
 new_field_name='' # New name for the above stated field
+
+# ---------
+# Remove needs:
+# ---------
+# Take into account that you will remove the information from the field in all the files in the colection.
+field_to_remove='' # Name of the field to be removed.
