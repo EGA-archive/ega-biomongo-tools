@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""insert.py  :  Insert document in the desired MongoDB and collection """
+"""new_field.py  :  Generate a new field in a collection """
 
 __author__ = "Marta Huertas"
 __version__ = "0.1"
