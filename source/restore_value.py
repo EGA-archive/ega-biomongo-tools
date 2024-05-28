@@ -137,7 +137,8 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
                 else:
                     print('Only update operations can be restored.')
                 break  # Exit the loop once the correct log_id is found and processed
-
+            else:
+                print(f"The log id {log_id} does not exist in the document.")
     if restored_documents == 0:
         log_functions.deleteLog(db, str(process_id))
         print("No changes were made.")
