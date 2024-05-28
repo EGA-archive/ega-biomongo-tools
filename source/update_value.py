@@ -125,7 +125,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         values_to_match = update_data[field_to_match].values
         new_values = update_data[update_field].values
 
-        print(f'There are {len(values_to_match)} objects to update:')
+        print(f'There are {len(values_to_match)} objects to update.')
 
         # Access the collection:
         collection = db[collection_name]
@@ -178,17 +178,15 @@ def updateFile(operation, db, collection_name, update_file, name, method):
                     # Print whether the document was updated or not
                     if result.modified_count > 0:
                         updates_made += 1
-                        print(f'Field {update_field} updated successfully in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}')
-                        print('')
                     else:
                         print(f'Field {update_field} in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]} remains unchanged.')
                         print('')
 
                 else:
-                    print(f"The field {update_field} doesn't exist in the document.")
+                    print(f"The field {update_field} doesn't exist in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}.")
 
             else:
-                print(f"The document you are searching for is not in the collection.")
+                print(f"The document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]} is not in the collection.")
 
         # If no updates were made, remove the meta and files documents
         if updates_made == 0:
@@ -196,7 +194,7 @@ def updateFile(operation, db, collection_name, update_file, name, method):
             log_functions.deleteLog(db, str(process_id))
             print("No changes were made.")
         else:
-            print("Update done!")
+            print(f"Total number of updates made: {updates_made}.")
 
     else:
         print(f'{update_file} file does not exist.')
