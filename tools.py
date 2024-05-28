@@ -69,8 +69,11 @@ def run_operation():
     elif conf.operation == 'add_field_with_file' and conf.new_field_file != '':
         new_field.addFieldFile(conf.operation, db, conf.collection_name, conf.new_field_file, conf.name, conf.method)
 
-    elif conf.operation == 'rename_field' and conf.new_field_file != '':
+    elif conf.operation == 'rename_field' and conf.field_name != '' and conf.new_field_name != '':
         rename.renameField(conf.operation, db, conf.collection_name, conf.field_name, conf.new_field_name, conf.name, conf.method)
+
+    elif conf.operation == 'remove_field' and conf.field_to_remove != '':
+        rename.renameField(conf.operation, db, conf.collection_name, conf.field_to_remove, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
@@ -79,7 +82,7 @@ def main():
     if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
-    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore_one', 'restore_all', 'add_empty_field', 'add_field_with_file', 'rename_field']:
+    elif conf.operation == '' or conf.operation not in ['insert_one', 'insert_many', 'update_one', 'update_all', 'update_with_file', 'restore_one', 'restore_all', 'add_empty_field', 'add_field_with_file', 'rename_field', 'remove_field']:
         print("Operation is missing or wrong.")
     elif conf.database_name == '':
         print("Database is missing.")
