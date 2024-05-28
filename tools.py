@@ -12,7 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import insert, rename_field, restore_value, new_field, mongoConnection, update_value
+from source import insert, update_value, restore_value, rename_field, new_field, remove_field, mongoConnection
 
 # Functions
 def print_help():
@@ -73,7 +73,7 @@ def run_operation():
         rename_field.renameField(conf.operation, db, conf.collection_name, conf.field_name, conf.new_field_name, conf.name, conf.method)
 
     elif conf.operation == 'remove_field' and conf.field_to_remove != '':
-        rename_field.renameField(conf.operation, db, conf.collection_name, conf.field_to_remove, conf.name, conf.method)
+        remove_field.removeField(conf.operation, db, conf.collection_name, conf.field_to_remove, conf.name, conf.method)
 
     else:
         print('Something is missing in the conf.py file')
