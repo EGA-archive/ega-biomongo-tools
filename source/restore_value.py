@@ -41,7 +41,7 @@ def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, met
         print(f'The log_id: {log_id} does not exist in the document.')
         return
 
-    if 'update' not in log_entry.get('operation'):
+    if 'update' not in log_entry.get('operation') or 'remove' not in log_entry.get('operation'):
         log_functions.deleteLog(db, str(process_id))
         print('Only update operations can be restored.')
         return
