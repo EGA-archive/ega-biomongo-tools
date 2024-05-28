@@ -104,7 +104,7 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
         # Find the update corresponding to the desired log_id
         for update in log:
             if update.get('log_id') == log_id:
-                if 'update' in update.get('operation'):
+                if 'update' in update.get('operation') or 'remove' in update.get('operation'):
                     # Get the field and value to restore
                     update_field = update.get('modified_field')
                     previous_value = document.get(update_field)
