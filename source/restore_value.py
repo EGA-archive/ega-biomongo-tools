@@ -3,7 +3,7 @@
 """restore.py  :  Reset to previous version as saved in meta """
 
 __author__ = "Marta Huertas"
-__version__ = "0.1"
+__version__ = "0.1.2"
 __maintainer__ = "Aldar Cabrelles"
 __email__ = "aldar.cabrelles@crg.eu"
 __status__ = "development"
