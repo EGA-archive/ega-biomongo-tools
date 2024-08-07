@@ -12,7 +12,7 @@ To install BioMongo tools, follow these steps:
 1. Clone this repository to your local machine:
 
 ```
-git clone git@github.com:m-huertasp/ega-biomongo-tools.git
+git clone https://github.com/EGA-archive/ega-biomongo-tools.git
 ```
 
 2. Install the required dependencies, taking into account that `python --version == 3.10.12`:
