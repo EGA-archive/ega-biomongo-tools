@@ -35,8 +35,14 @@ def updateLog(previous_document, process_id, operation, update_field, previous_v
     """
     Update already generated log field
     """
-    # Get the existing log, or an empty list if it doesn't exist
-    existing_log = previous_document.get("log", [])
+    # NEW
+    # If there's no previous document (meaning the log doesn't exist yet), start with an empty log
+    if previous_document is None:
+        existing_log = []
+    else:
+        # Get the existing log, or start with an empty list if it doesn't exist
+        existing_log = previous_document.get("log", [])
+    ## END NEW
 
     # Define the new metadata to be added
     new_log = {
