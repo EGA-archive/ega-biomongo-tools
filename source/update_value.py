@@ -112,6 +112,9 @@ def updateFile(operation, db, collection_name, update_file, name, method):
     """
     Update multiple documents with information from a csv
     """
+
+    chunk_size=10 # establishing the maximum number of lines that a CSV can have before being split
+
     if os.path.exists(update_file):
         # Import the update information
         update_data = pd.read_csv(update_file)
@@ -133,19 +136,31 @@ def updateFile(operation, db, collection_name, update_file, name, method):
         # Insert metadata about the update process
         process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
-        # Prepare data for insertion into the files collection
-        files_data = {
-            "log_id": str(process_id),
-            "operation": operation,
-            field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
-            update_field: new_values.tolist()  # Convert numpy array to Python list
-        }
 
         # Access or create the files collection:
         files_collection = db["update_files"]
 
-        # Insert the data into the files collection
-        files_collection.insert_one(files_data)
+        # Split the data into chunks and insert each chunk into the 'update_files' collection
+        num_chunks = (len(values_to_match) + chunk_size - 1) // chunk_size 
+
+
+        # Calculate number of chunks
+        for i in range(num_chunks):
+            start_idx = i * chunk_size
+            end_idx = min(start_idx + chunk_size, len(values_to_match))
+            chunk_values_to_match = values_to_match[start_idx:end_idx].tolist()
+            chunk_new_values = new_values[start_idx:end_idx].tolist()
+
+            files_data = {
+                "log_id": str(process_id),
+                "operation": operation,
+                field_to_match: chunk_values_to_match,
+                update_field: chunk_new_values
+            }
+
+            # Insert the chunk data into the files collection
+            files_collection.insert_one(files_data)  
+
 
         # For each row, use the update one function to modify the specific field stated in the file.
         updates_made = 0
