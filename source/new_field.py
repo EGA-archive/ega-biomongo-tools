@@ -71,6 +71,10 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     """
     Update multiple documents with information from a CSV file.
     """
+
+    chunk_size=5 # establishing the maximum number of lines that a CSV can have before being split
+
+
     if not os.path.exists(new_field_file):
         print(f'{new_field_file} file does not exist.')
         return
@@ -102,17 +106,27 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     # Insert metadata about the update process
     process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
-    # Prepare data for insertion into the files collection
-    files_data = {
-        "log_id": str(process_id),
-        "operation": operation,
-        field_to_match: values_to_match.tolist(),  # Convert numpy array to Python list
-        new_field: new_values.tolist()  # Convert numpy array to Python list
-    }
-
     # Access or create the files collection
     files_collection = db["update_files"]
-    files_collection.insert_one(files_data)
+
+    # Split the data into chunks and insert each chunk into the 'update_files' collection
+    num_chunks = (len(values_to_match) + chunk_size - 1) // chunk_size  # Calculate number of chunks
+    for i in range(num_chunks):
+        start_idx = i * chunk_size
+        end_idx = min(start_idx + chunk_size, len(values_to_match))
+        chunk_values_to_match = values_to_match[start_idx:end_idx].tolist()
+        chunk_new_values = new_values[start_idx:end_idx].tolist()
+
+        files_data = {
+            "log_id": str(process_id),
+            "operation": operation,
+            field_to_match: chunk_values_to_match,
+            new_field: chunk_new_values
+        }
+
+        # Insert the chunk data into the files collection
+        files_collection.insert_one(files_data)
+
 
     # Prepare bulk update operations
     bulk_updates = []
