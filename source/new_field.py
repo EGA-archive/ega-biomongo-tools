@@ -112,7 +112,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
 
     
     # Prepare data for insertion into the files collection
-    
+
     print(f"{datetime.datetime.now()} : Preparing json from csv")
     files_data = {
         "log_id": str(process_id),
@@ -133,15 +133,15 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     print(f"{datetime.datetime.now()} : Preparing bulk updates")
     for value_to_match, new_value in zip(values_to_match, new_values):
         update_criteria = {field_to_match: value_to_match}
-        #previous_document = collection.find_one(update_criteria)
-        
+        # previous_document = collection.find_one(update_criteria) # NEW 
+
         # Directly append update operation, assuming document exists
-        updated_log = log_functions.updateLog(previous_document, process_id, operation, new_field, "Non-existing", new_value)
+        updated_log = log_functions.updateLog(None, process_id, operation, new_field, "Non-existing", new_value)
         bulk_updates.append(
             UpdateOne(update_criteria, {"$set": {new_field: new_value, "log": updated_log}})
         )
     print(f"{datetime.datetime.now()} : Bulk updates ready")
-    
+
     # Execute bulk updates for matched documents
     print(f"{datetime.datetime.now()} : Starting bulk update")
     if bulk_updates:
@@ -174,10 +174,10 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
 
     total_updates_made = updates_made + unmatched_updates_made
 
-    print(f"{datetime.datetime.now()} : Finished executing bulk updates for unmatched documents")
+    print(f"{datetime.datetime.now()} : Finished bulk updates for unmatched documents")
 
     print(f"{datetime.datetime.now()} : New data inserted into collection")
-    
+
     # If no updates were made, remove the log entry
     if total_updates_made == 0:
         files_collection.delete_one({"log_id": str(process_id)})
