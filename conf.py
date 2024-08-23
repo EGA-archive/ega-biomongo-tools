@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+y#!/usr/bin/env python
 
 """conf.py  :  Configuration file """
 
@@ -40,6 +40,11 @@ log_id='' # Log id to the version to be restored.
 # Add new empty field needs:
 # ----------
 new_field='' # Name of the new field to be added. Please do not use empty spaces or special characters
+
+# ---------
+# Add new field with file needs:
+# ----------
+new_field_file='' # If using add_field_with_file, please provide the csv with the information. The structure should be the same as the update file
 
 # ---------
 # Add new field with file needs:
