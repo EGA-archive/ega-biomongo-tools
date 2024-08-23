@@ -4,8 +4,8 @@
 
 __author__ = "Marta Huertas"
 __version__ = "0.1"
-__maintainer__ = "Marta Huertas"
-__email__ = "marta.huertas@crg.eu"
+__maintainer__ = "Aldar Cabrelles"
+__email__ = "aldar.cabrelles@crg.eu"
 __status__ = "development"
 
 
@@ -81,7 +81,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     update_data = pd.read_csv(new_field_file)
 
     print(f"{datetime.datetime.now()} : CSV read")
-
+    
     # Get the fields:
     column_names = update_data.columns.to_list()
     if len(column_names) < 2:
@@ -92,7 +92,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     new_field = column_names[1]  # The header from the second column will be the update field
 
     print(f"{datetime.datetime.now()} : Field to match ({field_to_match}), New field ({new_field})")
-
+    
     # Get the values from the columns
     values_to_match = update_data[field_to_match].values
     new_values = update_data[new_field].values
@@ -110,7 +110,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     process_id = log_functions.insertLog(db, name, method, operation, collection_name)
     print(f"{datetime.datetime.now()} : Log file created")
 
-
+    
     # Prepare data for insertion into the files collection
 
     print(f"{datetime.datetime.now()} : Preparing json from csv")
@@ -123,14 +123,14 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     print(f"{datetime.datetime.now()} : json created")
 
     print(f"{datetime.datetime.now()} : Inserting new data into collection")
-
+    
     # Access or create the files collection
     files_collection = db["update_files"]
     files_collection.insert_one(files_data)
 
     # Prepare bulk update operations
     bulk_updates = []
-    print(f"{datetime.datetime.now()} : preapering bulk updates")
+    print(f"{datetime.datetime.now()} : Preparing bulk updates")
     for value_to_match, new_value in zip(values_to_match, new_values):
         update_criteria = {field_to_match: value_to_match}
         # previous_document = collection.find_one(update_criteria) # NEW 
@@ -140,19 +140,19 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
         bulk_updates.append(
             UpdateOne(update_criteria, {"$set": {new_field: new_value, "log": updated_log}})
         )
-    print(f"{datetime.datetime.now()} : bulk updates ready")
+    print(f"{datetime.datetime.now()} : Bulk updates ready")
 
     # Execute bulk updates for matched documents
-    print(f"{datetime.datetime.now()} : starting bulk update")
+    print(f"{datetime.datetime.now()} : Starting bulk update")
     if bulk_updates:
         result = collection.bulk_write(bulk_updates)
         updates_made = result.modified_count
     else:
         updates_made = 0
-    print(f"{datetime.datetime.now()} : bulk update finished")
-
+    print(f"{datetime.datetime.now()} : Bulk update finished")
+    
     # Handle documents that are not inside the file
-    print(f"{datetime.datetime.now()} : managing logs for files not updated")
+    print(f"{datetime.datetime.now()} : Managing logs for files not updated")
     all_documents = collection.find()
     unmatched_updates_made = 0
     unmatched_bulk_updates = []
@@ -163,10 +163,10 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
             unmatched_bulk_updates.append(
                 UpdateOne(update_criteria, {"$set": {new_field: None, "log": updated_log}})
             )
-    print(f"{datetime.datetime.now()} : finished managing logs for files not updated")
+    print(f"{datetime.datetime.now()} : Finished managing logs for files not updated")
 
-    print(f"{datetime.datetime.now()} : Execute bulk updates for unmatched documents")
-
+    print(f"{datetime.datetime.now()} : Starting bulk updates for unmatched documents")
+    
     # Execute bulk updates for unmatched documents
     if unmatched_bulk_updates:
         result = collection.bulk_write(unmatched_bulk_updates)
@@ -174,7 +174,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
 
     total_updates_made = updates_made + unmatched_updates_made
 
-    print(f"{datetime.datetime.now()} : finish Execute bulk updates for unmatched documents")
+    print(f"{datetime.datetime.now()} : Finished bulk updates for unmatched documents")
 
     print(f"{datetime.datetime.now()} : New data inserted into collection")
 
