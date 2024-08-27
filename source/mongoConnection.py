@@ -4,8 +4,8 @@
 
 __author__ = "Marta Huertas"
 __version__ = "0.1"
-__maintainer__ = "Marta Huertas"
-__email__ = "marta.huertas@crg.eu"
+__maintainer__ = "Aldar Cabrelles"
+__email__ = "aldar.cabrelles@crg.eu"
 __status__ = "development"
 
 # Connection details:
