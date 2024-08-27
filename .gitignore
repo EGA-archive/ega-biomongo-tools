@@ -1,5 +1,6 @@
 #environment
 biomongo/
+.DS_store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -8,6 +9,7 @@ __pycache__/
 
 # Test metadata
 test_metadata/
+reports/
 
 # C extensions
 *.so
@@ -83,7 +85,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-
+*.ipynb
 # IPython
 profile_default/
 ipython_config.py

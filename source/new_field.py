@@ -15,6 +15,7 @@ from . import log_functions
 import os
 import pandas as pd
 from pymongo import UpdateOne
+import datetime
 
 def addNullField(operation, db, collection_name, new_field, name, method):
     """
@@ -72,7 +73,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
     Update multiple documents with information from a CSV file.
     """
 
-    chunk_size=5 # establishing the maximum number of lines that a CSV can have before being split
+    chunk_size=10000 # establishing the maximum number of lines that a CSV can have before being split
 
 
     if not os.path.exists(new_field_file):

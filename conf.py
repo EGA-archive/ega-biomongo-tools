@@ -1,4 +1,4 @@
-y#!/usr/bin/env python
+#!/usr/bin/env python
 
 """conf.py  :  Configuration file """
 
@@ -19,7 +19,7 @@ collection_name='' # Collection to be managed (analysis, dac, dataset, experimen
 # ---------
 # Insert needs:
 # ----------
-json_documents=f'path/to/json' # Path to the json documents to be included in the MongoDB.
+json_documents=f'path/to/csv' # Path to the json documents to be included in the MongoDB.
 
 # ----------
 # Update needs (update_field is always needed):
@@ -28,7 +28,7 @@ update_field='' # Target field to be updated.
 new_value='' # New value for the field (no need if using a file).
 update_criteria={'field_to_match':'value_to_match'} # Criteria to update one, pick a field with unique values.
 # If using update_with_file, please provide the csv with the information.
-update_file = 'path/to/csv' # If you want to add a list as a new value, separate the values with ";"
+update_file = 'path/to/csv/or/directory' # If you want to add a list as a new value, separate the values with ";". You can link to a directory full of csv files, too.
 
 # ----------
 # Restore needs:
@@ -44,12 +44,7 @@ new_field='' # Name of the new field to be added. Please do not use empty spaces
 # ---------
 # Add new field with file needs:
 # ----------
-new_field_file='' # If using add_field_with_file, please provide the csv with the information. The structure should be the same as the update file
-
-# ---------
-# Add new field with file needs:
-# ----------
-new_field_file='' # If using add_field_with_file, please provide the csv with the information. The structure should be the same as the update file
+new_field_file='/path/to/csv' # If using add_field_with_file, please provide the csv with the information. The structure should be the same as the update file
 
 # ----------
 # Rename needs:
