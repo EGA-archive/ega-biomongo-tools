@@ -169,9 +169,7 @@ def addFieldFile(operation, db, collection_name, new_field_file, name, method):
         if field_to_match not in doc or doc[field_to_match] not in values_to_match:
             update_criteria = {"_id": doc["_id"]}
             updated_log = log_functions.updateLog(doc, process_id, operation, new_field, "Non-existing", None)
-            unmatched_bulk_updates.append(
-                UpdateOne(update_criteria, {"$set": {new_field: None, "log": updated_log}})
-            )
+            unmatched_bulk_updates.append(UpdateOne(update_criteria,{"$set": {new_field: new_value},"$push":{"log":updated_log}}))
     print(f"{datetime.datetime.now()} : Finished managing logs for files not updated")
 
     print(f"{datetime.datetime.now()} : Starting bulk updates for unmatched documents")

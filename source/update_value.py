@@ -14,8 +14,8 @@ import os
 from pymongo import UpdateOne
 from os import listdir
 from os.path import isfile, join, isdir
-from itertools import chain
 import pandas as pd
+import re
 
 # Update one function
 def updateOne(operation, db, collection_name, update_criteria, update_field, new_value, name, method):
@@ -125,8 +125,8 @@ def updateFile(operation, db, collection_name, update_file, name, method):
             csv_files = [update_file]
             print("There is 1 file to process.")
         elif isdir(update_file) == True:
-            csv_files = sorted([update_file+"/"+f for f in listdir(update_file) if isfile(join(update_file, f))])
-            csv_files = csv_files if isinstance(csv_files, list) else [csv_files]
+            csv_files = [update_file+"/"+f for f in listdir(update_file) if isfile(join(update_file, f))]
+            csv_files = sorted(csv_files, key=lambda s: [int(text) if text.isdigit() else text.lower() for text in re.split('([0-9]+)',s)]) if isinstance(csv_files, list) else [csv_files]
             print(f'There is/are {len(csv_files)} file(s) to process.')
         
         #Begin loop
