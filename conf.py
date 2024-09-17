@@ -19,7 +19,7 @@ collection_name='' # Collection to be managed (analysis, dac, dataset, experimen
 # ---------
 # Insert needs:
 # ----------
-json_documents=f'path/to/csv' # Path to the json documents to be included in the MongoDB.
+json_documents=f'path/to/json/or/directory' # Path to a json document or directory to be inserted.
 
 # ----------
 # Update needs (update_field is always needed):
