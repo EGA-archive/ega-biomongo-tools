@@ -117,15 +117,13 @@ def updateFile(operation, db, collection_name, update_file, name, method):
     Update multiple documents with information from a csv
     """
 
-    chunk_size=10000 # establishing the maximum number of lines that a CSV can have before being split
-
     if os.path.exists(update_file) and isfile(update_file)==True or isdir(update_file)==True:
         #NEW Obtain list of elements found in directory, turn them into iterable lists
         if isfile(update_file) == True:
             csv_files = [update_file]
             print("There is 1 file to process.")
         elif isdir(update_file) == True:
-            csv_files = [update_file+"/"+f for f in listdir(update_file) if isfile(join(update_file, f))]
+            csv_files = [update_file + "/" + f for f in listdir(update_file) if isfile(join(update_file, f))]
             csv_files = sorted(csv_files, key=lambda s: [int(text) if text.isdigit() else text.lower() for text in re.split('([0-9]+)',s)]) if isinstance(csv_files, list) else [csv_files]
             print(f'There is/are {len(csv_files)} file(s) to process.')
         
@@ -151,97 +149,54 @@ def updateFile(operation, db, collection_name, update_file, name, method):
                 # Access the collection:
                 collection = db[collection_name]
 
-                # Access or create the files collection:
-                files_collection = db["update_files"]
+                # Insert metadata about the update process
+                process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
-                # Split the data into chunks and insert each chunk into the 'update_files' collection
-                num_chunks = (len(values_to_match) + chunk_size - 1) // chunk_size 
+                # Track the documents that were actually updated
+                updates_made = 0
 
-                # Begin processing chunks
-                for i in range(num_chunks):
-
-                    print(f"Processing chunk number {i+1}.")
-
-                    # Calculate the start and end indices for each chunk
-                    start_idx = i * chunk_size
-                    end_idx = min(start_idx + chunk_size, len(values_to_match))
-
-                    # Define chunk values for this batch
-                    chunk_values_to_match = values_to_match[start_idx:end_idx].tolist()
-                    chunk_new_values = new_values[start_idx:end_idx].tolist()
-
-                    # Insert metadata about the update process
-                    process_id = log_functions.insertLog(db, name, method, operation, collection_name)
-
-                    # Track the documents that were actually updated
-                    updated_values_to_match = []
-                    updated_new_values = []
-
-                    # For each row, use the update one function to modify the specific field stated in the file.
-                    updates_made = 0
-                    for value_to_match, new_value in zip(chunk_values_to_match, chunk_new_values):
-
-                        # Convert the string "None" to the Python None type
-                        if pd.isna(new_value) or new_value == None:
-                            new_value_list = None
-                        else:
-                            # Convert new_value to a list if it contains a semicolon, otherwise use it as is
-                            new_value_list = new_value.split(";") if ";" in new_value else new_value                            
-
-                        # Stable id of the object to be updated
-                        update_criteria = {field_to_match: value_to_match}
-
-                        # Find the document before the update to retrieve the previous value
-                        previous_document = collection.find_one(update_criteria)
-
-                        # Check if the document with the specified criteria exists in the collection
-                        if previous_document:
-                            # Check if the field exists in the document
-                            if update_field in previous_document:
-                                # Get the previous value of the field
-                                previous_value = previous_document.get(update_field)
-
-                                # Check if the new value is different from the current value
-                                if new_value_list != previous_value:            
-                                    # Update the log field in the JSON document
-                                    updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field,
-                                                                    previous_value, new_value_list)
-
-                                    # Update the document with the new data
-                                    result = collection.update_one(update_criteria,
-                                                                {"$set": {update_field: new_value_list, "log": updated_log}})
-
-                                    # Check whether the document was updated 
-                                    if result.modified_count > 0:
-                                        updates_made += 1
-                                        updated_values_to_match.append(value_to_match)  # Track updated document
-                                        updated_new_values.append(new_value)  # Track updated value                  
-
-                                else:
-                                    print(f'Field {update_field} in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]} has the same value, no update made.')
-
-                            else:
-                                print(f"The field {update_field} doesn't exist in the document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]}.")
-
-                        else:
-                            print(f"The document with {list(update_criteria.keys())[0]}: {list(update_criteria.values())[0]} is not in the collection.")
-
-                    # Only insert metadata for the documents that were actually updated, a document is created for each chunk  
-                    if updates_made > 0:
-                        files_data = {
-                            "log_id": str(process_id),
-                            "operation": operation,
-                            field_to_match: updated_values_to_match,  # Only updated values
-                            update_field: updated_new_values  # Only new values for updated documents
-                        }
-                        files_collection.insert_one(files_data)
-
-                        print(f"Total number of updates made in chunk number {i+1}: {updates_made}.")
+                # Perform updates 
+                for value_to_match, new_value in zip(values_to_match, new_values):
+                    # Convert the string "None" to the Python None type
+                    if pd.isna(new_value) or new_value == None:
+                        new_value_list = None
                     else:
-                        print(f"No changes were made in chunk number {i+1}.")
+                        # Convert new_value to a list if it contains a semicolon, otherwise use it as is
+                        new_value_list = new_value.split(";") if ";" in new_value else new_value                            
+                    
+                    # Stable id of the object to be updated
+                    update_criteria = {field_to_match: value_to_match}
 
+                    # Find the document before the update to retrieve the previous value
+                    previous_document = collection.find_one(update_criteria)
+
+                    # Check if the document with the specified criteria exists in the collection
+                    if previous_document:
+                        if update_field in previous_document:
+                            previous_value = previous_document.get(update_field)
+
+                            # Check if the new value is different from the current value
+                            if new_value_list != previous_value:            
+                                updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field,
+                                                                previous_value, new_value_list)
+                                # Update the document with the new data
+                                result = collection.update_one(update_criteria,
+                                                            {"$set": {update_field: new_value_list, "log": updated_log}})
+                                # Check whether the document was updated 
+                                if result.modified_count > 0:
+                                    updates_made += 1                 
+                            else:
+                                print(f'Field {update_field} in the document with {field_to_match}: {value_to_match} has the same value, no update made.')
+                        else:
+                            print(f"The field {update_field} doesn't exist in the document with {field_to_match}: {value_to_match}.")
+                    else:
+                        print(f"The document with {field_to_match}: {value_to_match} is not in the collection.")
+
+                print(f"Total number of updates made: {updates_made}.")
             else:
-                print(f, "is not a csv file.")
+                print(f"{f} is not a CSV file.")
+
         print("Updates finished!")
+
     else:
         print(f'{update_file} file or directory does not exist.')
