@@ -214,7 +214,7 @@ def upsertFile(operation, db, collection_name, update_file, name, method):
 
                         if current_value is None:
                             # If the field is set as Null or doesn't exist, create it and set the new value
-                            print(f"Field '{update_field}' doesn't exist in document with stable_id: {value_to_match}. Creating field and setting new value.")
+                            print(f"Field '{update_field}' doesn't exist or has no value in document with stable_id: {value_to_match}. Creating field and setting new value.")
                             updated_log = log_functions.updateLog(previous_document, process_id, operation, update_field, None, new_value_list)
                             result = collection.update_one(update_criteria, {"$set": {update_field: new_value_list, "log": updated_log}})
                             if result.modified_count > 0:
