@@ -34,6 +34,9 @@ def upsertOne(operation, db, collection_name, update_criteria, update_field, new
         # Convert new_value to a list if it contains a semicolon, otherwise use it as it is
         new_value_list = new_value.split(";") if ";" in new_value else new_value
 
+        # Insert metadata about the update process in the log_details collection
+        process_id = log_functions.insertLog(db, name, method, operation, collection_name)
+
         # Retrieve the current value using dot notation (if available)
         current_value = previous_document
         # Use dot notation to access nested fields
@@ -54,9 +57,6 @@ def upsertOne(operation, db, collection_name, update_criteria, update_field, new
         else:
             print(f"Field {update_field} exists but has the same value in document with stable_id: {list(update_criteria.values())[0]}. No update required.")
             return  # Exit the function without performing the update if values are the same
-
-        # Insert metadata about the update process in the log_details collection
-        process_id = log_functions.insertLog(db, name, method, operation, collection_name)
 
         # Update the document with the new data
         result = collection.update_one(update_criteria, {"$set": {update_field: new_value_list, "log": updated_log}})
