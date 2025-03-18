@@ -12,7 +12,7 @@ __status__ = "development"
 import sys
 from pymongo import MongoClient
 import conf
-from source import insert, update_value, restore_value, rename_field, new_field, remove_field, mongoConnection, upsert
+from source import insert, update_value, restore_value, rename_field, new_field, remove_field, mongoConnection
 
 # Functions
 def print_help():
@@ -54,15 +54,6 @@ def run_operation():
     elif conf.operation == 'update_with_file' and conf.update_file != '':
         update_value.updateFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
 
-    elif conf.operation == 'upsert_one' and conf.update_field != '' and conf.new_value != '':
-        upsert.upsertOne(conf.operation, db, conf.collection_name, conf.update_criteria, conf.update_field, conf.new_value, conf.name, conf.method)
-
-    elif conf.operation == 'upsert_all' and conf.update_field != '' and conf.new_value != '':
-        upsert.upsertAll(conf.operation, db, conf.collection_name, conf.update_field, conf.new_value, conf.name, conf.method)
-
-    elif conf.operation == 'upsert_with_file' and conf.update_file != '':
-        upsert.upsertFile(conf.operation, db, conf.collection_name, conf.update_file, conf.name, conf.method)
-
     elif conf.operation == 'restore_one' and conf.restore_criteria != '' and conf.log_id != '':
         restore_value.restoreOne(conf.operation, db, conf.collection_name, conf.restore_criteria, conf.log_id, conf.name, conf.method)
 
@@ -71,9 +62,6 @@ def run_operation():
 
     elif conf.operation == 'add_empty_field' and conf.new_field != '':
         new_field.addNullField(conf.operation, db, conf.collection_name, conf.new_field, conf.name, conf.method)
-
-    elif conf.operation == 'add_field_with_file' and conf.new_field_file != '':
-        new_field.addFieldFile(conf.operation, db, conf.collection_name, conf.new_field_file, conf.name, conf.method)
 
     elif conf.operation == 'rename_field' and conf.field_name != '' and conf.new_field_name != '':
         rename_field.renameField(conf.operation, db, conf.collection_name, conf.field_name, conf.new_field_name, conf.name, conf.method)
@@ -88,7 +76,7 @@ def main():
     if conf.operation == '' and conf.database_name == '' and conf.collection_name == '' and conf.name == '' and conf.method == '':
         # First print help message just in case.
         print_help()
-    elif conf.operation == '' or conf.operation not in ['insert', 'update_one', 'update_all', 'update_with_file', 'upsert_one', 'upsert_all', 'upsert_with_file', 'restore_one', 'restore_all', 'add_empty_field', 'add_field_with_file', 'rename_field', 'remove_field']:
+    elif conf.operation == '' or conf.operation not in ['insert', 'update_one', 'update_all', 'update_with_file', 'restore_one', 'restore_all', 'add_empty_field', 'rename_field', 'remove_field']:
         print("Operation is missing or wrong.")
     elif conf.database_name == '':
         print("Database is missing.")
