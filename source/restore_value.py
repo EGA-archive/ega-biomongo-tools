@@ -19,7 +19,7 @@ def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, met
 
     # Find the document
     previous_document = collection.find_one(reset_criteria)
-
+    
     # Check if the document exists
     if not previous_document:
         print(f"The document you are searching for is not in the collection.")
@@ -39,9 +39,9 @@ def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, met
         print(f'The log_id: {log_id} does not exist in the document.')
         return
 
-    if 'update' not in log_entry.get('operation'):
+    if 'update' not in log_entry.get('operation') and 'restore' not in log_entry.get('operation'): 
         log_functions.deleteLog(db, str(process_id))
-        print('Only update operations can be restored.')
+        print('Only update|restore operations can be restored.')
         return
 
     # Get the field and value to restore
@@ -86,17 +86,17 @@ def restoreOne(operation, db, collection_name, reset_criteria, log_id, name, met
     # Convert single-element lists to a normal string
     restored_value_list = restored_value_list[0] if len(restored_value_list) == 1 else restored_value_list
 
-    # Add a new log entry for the restore operation
-    new_log_entry = {
-        "log_id": str(process_id),
-        "operation": operation,
-        "modified_field": modified_field,
-        "restored_value": restored_value_list,
-    }
-    log_entries.insert(0, new_log_entry)
+    # Check if the restored value is equal to the current value
+    if restored_value_list == current_value or restored_value_list == current_value_list:
+        log_functions.deleteLog(db, str(process_id))
+        print("The current value is already equal to the restored value. No changes were made.")
+        return
+    
+    # Create the log object for this operation
+    updated_log = log_functions.updateLog(previous_document, process_id, operation, modified_field, current_value, restored_value_list)
 
     # Perform update
-    result = collection.update_one(reset_criteria, {"$set": {modified_field: restored_value_list, "log": log_entries}})
+    result = collection.update_one(reset_criteria, {"$set": {modified_field: restored_value_list, "log": updated_log}})
 
     if result.modified_count > 0:
         print(f'Document with stable_id {reset_criteria.get("stable_id")} successfully restored to the value at log {log_id}')
@@ -131,8 +131,8 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
             print(f"The log_id {log_id} does not exist in the document with _id {document['_id']}")
             continue
 
-        if 'update' not in log_entry.get('operation'):
-            print(f"Only update operations can be restored in document with _id {document['_id']}")
+        if 'update' not in log_entry.get('operation') and 'restore' not in log_entry.get('operation'):
+            print(f"Only update|restore operations can be restored in document with _id {document['_id']}")
             continue
 
         # Get the field and value to restore
@@ -166,19 +166,18 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
         # Convert single-element lists to a normal string
         restored_value_list = restored_value_list[0] if len(restored_value_list) == 1 else restored_value_list
 
-        # Add a new log entry for the restore operation
-        new_log_entry = {
-            "log_id": str(process_id),
-            "operation": operation,
-            "modified_field": modified_field,
-            "restored_value": restored_value_list,
-        }
-        log_entries.insert(0, new_log_entry)
+        # Check if the restored value is equal to the current value
+        if restored_value_list == current_value or restored_value_list == current_value_list:
+            print(f"No changes needed for document stable_id {document['stable_id']}, the current value is already equal to the restored value.")
+            continue
+
+        # Create the log object for this operation
+        updated_log = log_functions.updateLog(document, process_id, operation, modified_field, current_value, restored_value_list)
 
         # Update the document
         result = collection.update_one(
             {"_id": document["_id"]},
-            {"$set": {modified_field: restored_value_list, "log": log_entries}}
+            {"$set": {modified_field: restored_value_list, "log": updated_log}}
         )
 
         if result.modified_count > 0:
@@ -189,4 +188,3 @@ def restoreAll(operation, db, collection_name, log_id, name, method):
         print("No changes were made.")
     else:
         print(f'Field {modified_field} restored successfully to the values at log {log_id} in {restored_documents} documents.')
-
